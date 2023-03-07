@@ -1,0 +1,38 @@
+parameters:
+    locale: 'en'
+
+    app_locales: ar|en|fr|de|es|cs|nl|ru|uk|ro|pt_BR|pl|it|ja|id|ca|sl|hr|zh_CN|bg|tr|lt|bs|sr_Cyrl|sr_Latn|eu
+    app.notifications.email_sender: anonymous@example.com
+
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            string $locales: '%app_locales%'
+            string $defaultLocale: '%locale%'
+            string $emailSender: '%app.notifications.email_sender%'
+            string $cacheDir: '%kernel.cache_dir%'
+            string $projectDir: '%kernel.project_dir%'
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Domain/{Entity,Event}/'
+            - '../src/Domain/Bus/{Command,Event}/'
+            - '../src/Infrastructure/Pagination/'
+            - '../src/Kernel.php'
+
+
+    Symfony\Bundle\FrameworkBundle\Controller\TemplateController:
+        tags: ['controller.service_arguments']
+
+    App\Domain\EventSubscriber\CommentNotificationSubscriber:
+        $sender: '%app.notifications.email_sender%'
+
+    Symfony\Component\Security\Http\Logout\LogoutUrlGenerator: '@security.logout_url_generator'
+
+    App\Domain\Bus\Listener\:
+        resource: '../src/Domain/Bus/Listener'
+        tags: ['messenger.message_handler']

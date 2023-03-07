@@ -3,11 +3,12 @@ includes:
 
 parameters:
     level: max
+    tmpDir: var
     paths:
         - src
         - tests
     bootstrapFiles:
-        - vendor/bin/.phpunit/phpunit/vendor/autoload.php
+        - vendor/autoload.php
     doctrine:
         objectManagerLoader: tests/object-manager.php
     symfony:

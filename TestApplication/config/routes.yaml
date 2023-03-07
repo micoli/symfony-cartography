@@ -1,0 +1,23 @@
+homepage:
+    path: /{_locale}
+    controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController::templateAction
+    requirements:
+        _locale: '%app_locales%'
+    defaults:
+        template: default/homepage.html.twig
+        _locale: '%locale%'
+
+controllers:
+    resource:
+        path: '../src/UserInterface/Controller/'
+        namespace:  App\UserInterface\Controller
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app_locales%'
+    defaults:
+        _locale: '%locale%'
+
+_symfony_cartography:
+    resource: '@SymfonyCartographyBundle/Resources/config/routes.yaml'
+    prefix: /cartography

@@ -1,0 +1,40 @@
+symfony_cartography:
+  sources:
+    - '%kernel.project_dir%/src'
+  filters:
+    classes:
+      rules:
+        - '+App\'
+        - '-App\Domain\DataFixtures'
+    method_calls:
+      exclude_loopback: true
+      rules:
+      - '-Twig\'
+      - '-ReflectionFunctionAbstract'
+      - '-Doctrine\'
+      - '-Symfony\'
+      - '-Webmozart\'
+      - '-Psr\'
+  colors:
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::undefined
+        color: '#033270'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::doctrineEntity
+        color: '#1368aa'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::controller
+        color: '#4091c9'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::messengerCommandHandler
+        color: '#9dcee2'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::messengerEventListener
+        color: '#fedfd4'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::messengerEvent
+        color: '#f29479'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::messengerCommand
+        color: '#f26a4f'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::symfonyConsoleCommand
+        color: '#ef3c2d'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::symfonyEventListener
+        color: '#cb1b16'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::doctrineRepository
+        color: '#65010c'
+      - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::symfonyEvent
+        color: '#f29479'
