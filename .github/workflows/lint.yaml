@@ -30,7 +30,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php-version: ['8.1']
+              php-version: ['8.1', '8.2']
 
         steps:
             - name: "Checkout code"
@@ -68,7 +68,7 @@ jobs:
 
             - name: Lint Twig templates
               if: always() && steps.install.outcome == 'success'
-              run: ./bin/console lint:twig templates --env=prod
+              run: ./bin/console lint:twig src/UserInterface/templates --env=dev
 
             - name: Lint XLIFF translations
               if: always() && steps.install.outcome == 'success'
@@ -77,6 +77,14 @@ jobs:
             - name: Lint Parameters and Services
               if: always() && steps.install.outcome == 'success'
               run: ./bin/console lint:container --no-debug
+
+            - name: Create local database
+              if: always() && steps.install.outcome == 'success'
+              run: |
+                mkdir -p TestApplication/data/ TestApplication/var
+                bin/console doctrine:database:create -e test
+                bin/console doctrine:schema:create -e test
+                bin/console doctrine:fixture:load -e test --purge-with-truncate -n
 
             - name: Lint Doctrine entities
               if: always() && steps.install.outcome == 'success'
@@ -90,6 +98,7 @@ jobs:
               if: always() && steps.install.outcome == 'success'
               run: composer audit
 
-            - name: Run PHPStan
+            - name: Run Psalm
               if: always() && steps.install.outcome == 'success'
-              run: ./vendor/bin/phpstan analyze
+              #run: ./vendor/bin/phpstan analyze
+              run: vendor/bin/psalm

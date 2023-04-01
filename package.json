@@ -1,40 +1,34 @@
 {
-    "devDependencies": {
-        "@babel/core": "^7.20.5",
-        "@babel/preset-env": "^7.16.0",
-        "@fortawesome/fontawesome-free": "^5.8.1",
-        "@hotwired/stimulus": "^3.0.0",
-        "@symfony/stimulus-bridge": "^3.0",
-        "@symfony/ux-live-component": "file:vendor/symfony/ux-live-component/assets",
-        "@symfony/webpack-encore": "^4.0",
-        "bloodhound-js": "^1.2.3",
-        "bootstrap": "^3.3",
-        "bootstrap-sass": "^3.3.7",
-        "bootstrap-tagsinput": "^0.7.1",
-        "bootswatch": "^3.3.7",
-        "core-js": "^3.23.0",
-        "eonasdan-bootstrap-datetimepicker": "^4.17.47",
-        "highlight.js": "^11.5.1",
-        "imports-loader": "^0.8.0",
-        "jquery": "^3.5.1",
-        "lato-font": "^3.0.0",
-        "moment": "^2.10",
-        "moment-timezone": "^0.5.40",
-        "regenerator-runtime": "^0.13.2",
-        "sass": "^1.53.0",
-        "sass-loader": "^13.2",
-        "stimulus": "^2.0.0",
-        "typeahead.js": "^0.11.1",
-        "webpack": "^5.72",
-        "webpack-cli": "^4.9.1",
-        "webpack-notifier": "^1.15.0"
-    },
-    "license": "MIT",
-    "private": true,
-    "scripts": {
-        "dev-server": "encore dev-server",
-        "dev": "encore dev",
-        "watch": "encore dev --watch",
-        "build": "encore production --progress"
-    }
+  "name": "vite-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node_modules/.bin/vite",
+    "build": "node_modules/.bin/tsc && vite build",
+    "preview": "node_modules/.bin/vite preview"
+  },
+  "dependencies": {
+    "@react-sigma/layout-forceatlas2": "^3.4.0",
+    "@tanstack/react-query": "^4.28.0",
+    "@vitejs/plugin-react-refresh": "^1.3.6",
+    "axios": "^1.3.4",
+    "mermaid": "^10.0.2",
+    "primeicons": "^6.0.1",
+    "primereact": "^9.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-inlinesvg": "^3.0.2",
+    "usehooks-ts": "2.2"
+  },
+  "devDependencies": {
+    "@hotwired/stimulus": "^3.0.0",
+    "@symfony/ux-live-component": "file:vendor/symfony/ux-live-component/assets",
+    "@tanstack/react-query-devtools": "^4.28.0",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.2.0"
+  }
 }

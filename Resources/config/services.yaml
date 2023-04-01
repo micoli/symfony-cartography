@@ -1,0 +1,20 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    bind:
+      string $cacheDir: '%kernel.cache_dir%'
+
+  Micoli\SymfonyCartography\:
+    resource: '../../src/'
+    exclude:
+        '../../src/DependencyInjection/'
+        '../../src/Model/'
+        '../../src/DataStructures/'
+
+  Micoli\SymfonyCartography\TwigExtension\ViteAssetExtension:
+    arguments:
+      #$isDev: '%env(VITE_DEV)%'
+      $isDev: true
+      $manifest: '%kernel.project_dir%/public/assets/manifest.json'
+#      $cache: '@vite_pool'

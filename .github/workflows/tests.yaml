@@ -14,6 +14,7 @@ env:
 
 permissions:
     contents: read
+    checks: write
 
 jobs:
     test:
@@ -24,12 +25,7 @@ jobs:
         strategy:
             matrix:
                 operating-system: ['ubuntu-latest']
-                php-version: ['8.1']
-                include:
-                    - operating-system: 'macos-latest'
-                      php-version: '8.1'
-                    - operating-system: 'windows-latest'
-                      php-version: '8.1'
+                php-version: ['8.1', '8.2']
 
         steps:
             - name: "Checkout code"
@@ -61,11 +57,21 @@ jobs:
             - name: "Install dependencies"
               run: composer install --no-interaction --no-progress
 
-            - name: "Install PHPUnit"
-              run: vendor/bin/simple-phpunit install
-
             - name: "PHPUnit version"
-              run: vendor/bin/simple-phpunit --version
+              run: vendor/bin/phpunit --version
+
+            - name: Create local database
+              run: |
+                mkdir -p TestApplication/data/ TestApplication/var
+                bin/console doctrine:database:create -e test
+                bin/console doctrine:schema:create -e test
+                bin/console doctrine:fixture:load -e test --purge-with-truncate -n
 
             - name: "Run tests"
-              run: vendor/bin/simple-phpunit ${{ env.PHPUNIT_FLAGS }}
+              run: vendor/bin/phpunit ${{ env.PHPUNIT_FLAGS }}
+
+            - name: Test Summary
+              uses: mikepenz/action-junit-report@v3
+              with:
+                report_paths: "var/results/**/*.xml"
+              if: always()

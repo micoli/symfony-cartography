@@ -1,0 +1,3 @@
+#symfony_cartography:
+#  sources:
+#    - '%kernel.project_dir%/src'

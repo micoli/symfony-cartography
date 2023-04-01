@@ -1,5 +1,5 @@
-/public/build/fonts/glyphicons-*
-/public/build/images/glyphicons-*
+/tests/TestApplication/public/build/fonts/glyphicons-*
+/tests/TestApplication/public/build/images/glyphicons-*
 
 .php-version
 
@@ -7,8 +7,8 @@
 /.env.local
 /.env.local.php
 /.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
+/tests/TestApplication/config/secrets/prod/prod.decrypt.private.php
+/tests/TestApplication/public/bundles/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
@@ -22,9 +22,38 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
-data/database.sqlite
+tests/TestApplication/data/database.sqlite
 
 ###> friendsofphp/php-cs-fixer ###
-/.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+.phpunit.cache
+###< phpunit/phpunit ###
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

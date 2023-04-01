@@ -1,0 +1,53 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set icon %}
+        <span class="icon" style="margin-right: 3px;{% if collector.filteredControllers|length == 0 %}filter: brightness(30%);{% endif %}">
+            {{ include('@SymfonyCartography/icon.svg') }}
+        </span>
+        <span class="sf-toolbar-value">Symfony Cartography</span>
+    {% endset %}
+
+    {% set text %}
+        <div class="sf-toolbar-info-piece">
+            {% for controller in collector.filteredControllers %}
+            <p>{{ controller }}</p>
+            <div style="overflow: auto;height:500px;width:400px;">
+                <img src="{{ enriched_class_svg(controller, true) }}" style="height:500px" />
+            </div>
+            {% endfor %}
+        </div>
+    {% endset %}
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { 'link': true }) }}
+{% endblock %}
+
+{% block menu %}
+    <span class="label">
+        <span class="icon">
+            {{ include('@SymfonyCartography/icon.svg') }}
+        </span>
+        <strong>Cartography</strong>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>Cartography</h2>
+    <div class="metrics">
+        {% for statisticName,statistic in collector.statistics %}
+        <div class="metric">
+            <span class="value">
+                {{ statistic }}
+                <span class="unit"></span>
+            </span>
+            <span class="label">{{ statisticName| camel_to_space }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    <br/>
+    {% for controller in collector.filteredControllers %}
+        <h1>{{ controller  }}</h1>
+        <div>
+        {{ enriched_class_svg(controller) }}
+        </div>
+    {% endfor %}
+{% endblock %}

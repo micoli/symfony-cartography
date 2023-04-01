@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}Symfony Cartography{% endblock %}</title>
+
+    {% block stylesheets %}
+        {{ vite_asset('index.css',[]) }}
+        {{ vite_asset('primeicons.css',[]) }}
+    {% endblock %}
+    {% block javascripts %}
+        {{ vite_asset('main.tsx',[]) }}
+    {% endblock %}
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+
+<body id="{% block body_id %}{% endblock %}">
+{% block header %}
+{% endblock %}
+<div id="root"></div>
+{% block footer %}
+{% endblock %}
+
+</body>
+</html>

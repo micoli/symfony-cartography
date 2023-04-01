@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="2"
+    errorLevel="1"
     resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
@@ -11,8 +11,10 @@
 >
     <projectFiles>
         <directory name="src" />
+        <directory name="TestApplication" />
         <ignoreFiles>
             <directory name="vendor" />
+            <directory name="TestApplication/var/" />
         </ignoreFiles>
     </projectFiles>
 </psalm>
