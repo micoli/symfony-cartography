@@ -1,8 +1,8 @@
 {
-    "name": "symfony/symfony-demo",
+    "name": "micoli/symfony-cartography",
     "license": "MIT",
-    "type": "project",
-    "description": "Symfony Demo Application",
+    "type": "library",
+    "description": "Symfony cartography bundle",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "replace": {
