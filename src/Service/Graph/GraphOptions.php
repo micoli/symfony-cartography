@@ -10,7 +10,9 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 final class GraphOptions
 {
     public function __construct(
-        public readonly bool $withMethodDisplay,
+        public readonly bool $withMethodDisplay = false,
+        public readonly bool $withMethodArrows = false,
+        public readonly bool $leftToRightDirection = false,
     ) {
     }
 }

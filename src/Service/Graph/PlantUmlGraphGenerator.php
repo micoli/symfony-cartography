@@ -58,35 +58,36 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
          * @var MethodCall $call
          */
         foreach ($enrichedClasses->getMethodCalls() as [$class, $method, $call]) {
-//            $idFromMethod = $this->getIdFromMethod($call->from);
-//            $idToMethod = $this->getIdFromMethod($call->to);
-//            $calls[$call->getClass2classHash()] = [
-//                'from' => $idFromMethod,
-//                'to' => $idToMethod,
-//                'label' => $call->label,
-//            ];
-//            $calls[$call->getClass2classHash()] = [
-//                'from' => $idFromMethod,
-//                'to' => $idToMethod,
-//                'label' => $call->label,
-//            ];
-            $calls[$call->getClass2classHash()] = [
-                'from' => $call->from->namespacedName,
-                'to' => $call->to->namespacedName,
-                'label' => $call->label,
-            ];
+            if($graphOptions->withMethodArrows){
+                $idFromMethod = $this->getIdFromMethod($call->from);
+                $idToMethod = $this->getIdFromMethod($call->to);
+                $calls[$call->getClass2classHash()] = [
+                    'from' => $idFromMethod,
+                    'to' => $idToMethod,
+                    'label' => $call->label,
+                ];
+            }else{
+                $calls[$call->getClass2classHash()] = [
+                    'from' => $call->from->namespacedName,
+                    'to' => $call->to->namespacedName,
+                    'label' => $call->label,
+                ];
+            }
         }
 
         $template = $this->environment->createTemplate(
             <<<TEMPLATE
                 @startuml
+                {% if options.leftToRightDirection %}left to right direction
+                {% endif %}
                 skinparam ArrowThickness 3
                 skinparam linetype polyline
                 skinparam linetype ortho
                 {% for className,class in enrichedClasses %}
                 class {{className}} {{ colors.getColor(class.category).background }};text:{{ colors.getColor(class.category).foreground[1:] }} {
                     <color:{{ colors.getColor(class.category).foreground }}>**{{class.category.asText}}**
-                    {%if class.getCommentsAsString %}<color:{{ colors.getColor(class.category).foreground }}>{{ class.getCommentsAsString }}{% endif %}
+                    {%if class.getCommentsAsString %}<color:{{ colors.getColor(class.category).foreground }}>{{ class.getCommentsAsString }}
+                    {% endif %}
                     {% if options.withMethodDisplay %}
                         ---
                         {% for method in class.methods %}
@@ -103,7 +104,6 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
                 @enduml
                 TEMPLATE
         );
-        // "{{call.from}}" ==> "{{call.to}}" {% if call.label is not null %}"{{call.label}}"{% endif %}
         return $template->render([
             'enrichedClasses' => $enrichedClasses,
             'calls' => $calls,
@@ -123,7 +123,7 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
 
     public function source(EnrichedClasses $enrichedClasses): string
     {
-        return $this->generate($enrichedClasses, new GraphOptions(false));
+        return $this->generate($enrichedClasses, new GraphOptions(false,false,true));
     }
 
     public function svg(EnrichedClasses $enrichedClasses): string
