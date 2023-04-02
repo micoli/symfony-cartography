@@ -22,6 +22,7 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
          * @var array{
          *     sources: list<string>,
          *     colors: list<array{class: ClassCategoryInterface,color:string}>,
+         *     messenger_dispatchers: list<array{class: class-string, method: string}>,
          *     filters: array{
          *         classes: array{
          *             rules: list<string>
@@ -48,6 +49,9 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
         $methodCallFiltersDefinition = $container->getDefinition(MethodCallCommonFilter::class);
         $methodCallFiltersDefinition->setArgument('$excludeLoopbackCall', $mergedConfig['filters']['method_calls']['exclude_loopback']);
         $methodCallFiltersDefinition->setArgument('$rules', $mergedConfig['filters']['method_calls']['rules']);
+
+        $messengerAnalyserDefinition = $container->getDefinition(MessengerAnalyser::class);
+        $messengerAnalyserDefinition->setArgument('$dispatchers', $mergedConfig['messenger_dispatchers']);
     }
 
     public function getAlias(): string

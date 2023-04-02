@@ -6,6 +6,7 @@ namespace App\Domain\Bus\Subscriber;
 
 use App\Domain\Bus\Event\PostCreatedEvent;
 use App\Domain\Bus\Event\UserCreatedEvent;
+use App\Domain\Bus\Event\UserPasswordUpdatedEvent;
 use App\Domain\Repository\PostRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -16,7 +17,7 @@ final class EventsSubscriber
     {
     }
 
-    public function __invoke(UserCreatedEvent|PostCreatedEvent $event): void
+    public function __invoke(UserCreatedEvent|PostCreatedEvent|UserPasswordUpdatedEvent $event): void
     {
         $this->postRepository->findBySearchQuery('lorem ipsum');
     }

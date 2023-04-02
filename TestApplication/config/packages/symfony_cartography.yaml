@@ -38,3 +38,8 @@ symfony_cartography:
         color: '#65010c'
       - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::symfonyEvent
         color: '#f29479'
+  messenger_dispatchers:
+    - class: App\Infrastructure\Bus\MessengerCommandBus
+      method: dispatch
+    - class: App\Infrastructure\Bus\MessengerEventDispatcher
+      method: dispatch

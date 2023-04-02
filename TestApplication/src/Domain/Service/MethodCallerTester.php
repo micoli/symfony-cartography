@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Bus\Event;
+namespace App\Domain\Service;
 
+use App\Domain\Bus\Event\CalledMethodEvent;
 use App\Domain\Bus\Event\TestClasses\Test1;
 use App\Domain\Bus\Event\TestClasses\Test2;
 use App\Domain\Bus\Event\TestClasses\Test3;
@@ -12,14 +13,12 @@ use App\Domain\Bus\Event\TestClasses\Test5;
 use App\Domain\Bus\Event\TestClasses\Test6;
 use App\Domain\Bus\Event\TestClasses\Test7;
 use App\Domain\Bus\Event\TestClasses\TestStatic1;
-use App\Infrastructure\Bus\CommandBusInterface;
 use App\Infrastructure\Bus\Message\Event\AsyncEventInterface;
 use Exception;
 
 final class MethodCallerTester implements AsyncEventInterface
 {
     public function __construct(
-        private readonly CommandBusInterface $commandBus,
     ) {
     }
 
@@ -34,7 +33,7 @@ final class MethodCallerTester implements AsyncEventInterface
         $int = random_int(1, 3);
         $test3 = new Test3();
         $test3->callTest4();
-        CalledMethodEvent::dispatch(
+        MethodCallerTester::testStatic(
             $this->createArg(),
             $event,
             1111,
@@ -51,10 +50,15 @@ final class MethodCallerTester implements AsyncEventInterface
         );
     }
 
+    public static function testStatic(mixed ...$args): void
+    {
+    }
+
     /**
      * @psalm-suppress InvalidReturnType
      **/
     private function createArg(): Test1|Test2|null
     {
+        return null;
     }
 }

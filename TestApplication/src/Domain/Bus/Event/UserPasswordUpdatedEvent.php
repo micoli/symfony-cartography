@@ -6,13 +6,10 @@ namespace App\Domain\Bus\Event;
 
 use App\Infrastructure\Bus\Message\Event\AsyncEventInterface;
 
-final class CalledMethodEvent implements AsyncEventInterface
+final class UserPasswordUpdatedEvent implements AsyncEventInterface
 {
     public function __construct(
+        public readonly int $id,
     ) {
-    }
-
-    public static function test(mixed ...$args): void
-    {
     }
 }
