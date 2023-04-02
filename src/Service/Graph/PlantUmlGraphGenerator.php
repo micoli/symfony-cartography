@@ -111,15 +111,18 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
         );
     }
 
+    public function source(EnrichedClasses $enrichedClasses): string
+    {
+        return $this->generate($enrichedClasses, new GraphOptions(false));
+    }
+
     public function svg(EnrichedClasses $enrichedClasses): string
     {
         return $this->httpClient->request(
             'POST',
             'http://127.0.0.1:8080/svg/',
             [
-                'body' => $this->generate($enrichedClasses, new GraphOptions(
-                    false,
-                )),
+                'body' => $this->source($enrichedClasses),
                 'headers' => [
                     'Accept' => 'image/svg+xml',
                     'Content-Type' => 'text/plain',

@@ -10,5 +10,7 @@ interface GraphGeneratorInterface
 {
     public function generate(EnrichedClasses $enrichedClasses, GraphOptions $graphOptions): string;
 
+    public function source(EnrichedClasses $enrichedClasses): string;
+
     public function svg(EnrichedClasses $enrichedClasses): string;
 }

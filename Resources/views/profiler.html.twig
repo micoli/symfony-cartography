@@ -46,6 +46,9 @@
     <br/>
     {% for controller in collector.filteredControllers %}
         <h1>{{ controller  }}</h1>
+        {#<pre>
+            {{ enriched_class_source(controller, true) }}
+        </pre> #}
         <div>
         {{ enriched_class_svg(controller) }}
         </div>

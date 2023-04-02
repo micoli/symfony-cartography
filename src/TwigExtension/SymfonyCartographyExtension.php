@@ -26,6 +26,7 @@ final class SymfonyCartographyExtension extends AbstractExtension
     {
         return [
             new TwigFunction('enriched_class_svg', [$this, 'enrichedClassSvg'], ['is_safe' => ['html']]),
+            new TwigFunction('enriched_class_source', [$this, 'enrichedClassPlantuml'], []),
         ];
     }
 
@@ -46,6 +47,15 @@ final class SymfonyCartographyExtension extends AbstractExtension
         }
 
         return $this->graphGenerator->svg($enrichedClasses);
+    }
+
+    public function enrichedClassPlantuml(string $classname): string
+    {
+        $enrichedClasses = $this->codeParser->analyse()->enrichedClasses;
+        $this->codeBaseFilters->filterOrphans($enrichedClasses);
+        $this->codeBaseFilters->filterFrom($enrichedClasses, $classname);
+
+        return $this->graphGenerator->source($enrichedClasses);
     }
 
     public function convertCamelCaseToHaveSpacesFilter(string $camelCaseString): string
