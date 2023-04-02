@@ -21,6 +21,7 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
     {
         /**
          * @var array{
+         *     enabled: true,
          *     sources: list<string>,
          *     colors: list<array{class: ClassCategoryInterface,color:string}>,
          *     messenger_dispatchers: list<array{class: class-string, method: string}>,
@@ -37,6 +38,9 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
          */
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../Resources/config'));
         $loader->load('services.yaml');
+
+        $symfonyCartographyCollectorDefinition = $container->getDefinition(SymfonyCartographyCollector::class);
+        $symfonyCartographyCollectorDefinition->setArgument('$enabled', $mergedConfig['enabled']);
 
         $codeBaseAnalyserDefinition = $container->getDefinition(CodeBaseAnalyser::class);
         $codeBaseAnalyserDefinition->setArgument('$srcRoots', $mergedConfig['sources']);

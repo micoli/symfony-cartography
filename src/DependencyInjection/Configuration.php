@@ -21,6 +21,7 @@ final class Configuration implements ConfigurationInterface
         $treeBuilder
             ->getRootNode()
                 ->children()
+                    ->booleanNode('enabled')->defaultTrue()->end()
                     ->arrayNode('sources')
                         ->scalarPrototype()->defaultValue(['%kernel.project_dir%/src'])->end()
                     ->end()

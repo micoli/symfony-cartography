@@ -19,6 +19,16 @@ final class AnalyzedCodeBase
     ) {
     }
 
+    public static function createEmpty(): self
+    {
+        return new self(
+            new EnrichedClasses(),
+            new InterfaceImplements(),
+            new ClassInterfaces(),
+            new ExtensionResultStore(),
+        );
+    }
+
     /**
      * @return array<string, int>
      */

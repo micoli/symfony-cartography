@@ -1,4 +1,5 @@
 symfony_cartography:
+  enabled: true
   sources:
     - '%kernel.project_dir%/src'
   filters:

@@ -24,8 +24,11 @@ use Throwable;
 /**
  * @property array{
  *     controllers: list<class-string>,
- *     statistics:array<string, int>
+ *     statistics:array<string, int>,
+ *     enabled: bool
  *  } $data
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 final class SymfonyCartographyCollector extends AbstractDataCollector implements EventSubscriberInterface
 {
@@ -42,8 +45,9 @@ final class SymfonyCartographyCollector extends AbstractDataCollector implements
     public function __construct(
         private readonly CodeBaseAnalyser $codeParser,
         private readonly CodeBaseFilters $codeBaseFilters,
+        private readonly bool $enabled,
     ) {
-        $this->analyzedCodeBase = $this->codeParser->analyse();
+        $this->analyzedCodeBase = $this->enabled ? $this->codeParser->analyse() : AnalyzedCodeBase::createEmpty();
         $this->requestDataCollector = new RequestDataCollector(null);
         $reflectionClass = new ReflectionClass($this->requestDataCollector);
         $this->parseControllerMethod = $reflectionClass->getMethod('parseController');
@@ -59,6 +63,10 @@ final class SymfonyCartographyCollector extends AbstractDataCollector implements
 
     public function collect(Request $request, Response $response, Throwable $exception = null): void
     {
+        $this->data['enabled'] = $this->enabled;
+        if (!$this->enabled) {
+            return;
+        }
         foreach ($this->analyzedCodeBase->enrichedClasses as $enrichedClass) {
             if ($enrichedClass->getCategory()->getValue() !== ClassCategory::controller->getValue()) {
                 continue;
@@ -104,6 +112,11 @@ final class SymfonyCartographyCollector extends AbstractDataCollector implements
         );
     }
 
+    public function isEnabled(): bool
+    {
+        return $this->data['enabled'];
+    }
+
     /** @return list<class-string> */
     public function getFilteredControllers(): array
     {
@@ -118,6 +131,9 @@ final class SymfonyCartographyCollector extends AbstractDataCollector implements
 
     public function onKernelController(ControllerEvent $event): void
     {
+        if (!$this->enabled) {
+            return;
+        }
         $this->controllers[] = [
             'request' => $event->getRequest(),
             'controller' => $event->getController(),
