@@ -8,8 +8,9 @@ use Micoli\SymfonyCartography\DataStructures\EnrichedClasses;
 use Micoli\SymfonyCartography\Model\EnrichedClass;
 use Micoli\SymfonyCartography\Model\MethodCall;
 use Micoli\SymfonyCartography\Model\MethodName;
-use Micoli\SymfonyCartography\Service\Categorizer\ClassCategoryColoring;
 use Micoli\SymfonyCartography\Service\Categorizer\ClassCategoryInterface;
+use Micoli\SymfonyCartography\Service\Categorizer\Coloring\ClassCategoryColoring;
+use Micoli\SymfonyCartography\Service\Categorizer\Coloring\ColorDTO;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Twig\Environment;
 
@@ -18,21 +19,29 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
     private ClassCategoryColoring $categoryColors;
 
     /**
-     * @param list<array{class: ClassCategoryInterface,color:string}> $categoryColors
+     * @param list<array{
+     *     class: ClassCategoryInterface,
+     *     color: string
+     * }> $categoryColorsParameter
      */
     public function __construct(
         private readonly Environment $environment,
         private readonly HttpClientInterface $httpClient,
-        array $categoryColors,
+        array $categoryColorsParameter,
     ) {
         $this->categoryColors = new ClassCategoryColoring(array_reduce(
-            $categoryColors,
+            $categoryColorsParameter,
             /**
-             * @param array<string, string> $accumulator
-             * @param array{class: ClassCategoryInterface,color:string} $color
+             * @param array<string, ColorDTO> $accumulator
+             * @param array{class: ClassCategoryInterface, color:string} $color
              */
             function (array $accumulator, array $color) {
-                $accumulator[$color['class']->asText()] = $color['color'];
+                /** @var string $key */
+                $key = $color['class']->asText();
+                $accumulator[$key] = new ColorDTO(
+                    $this->getForegroundColor($color['color']),
+                    $color['color'],
+                );
 
                 return $accumulator;
             },
@@ -75,15 +84,16 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
                 skinparam linetype polyline
                 skinparam linetype ortho
                 {% for className,class in enrichedClasses %}
-                class {{className}} {{ colors.getColor(class.category) }} {
-                    **{{class.category.asText}}**
-                    {{class.getCommentsAsString}}
-                    ---
+                class {{className}} {{ colors.getColor(class.category).background }};text:{{ colors.getColor(class.category).foreground[1:] }} {
+                    <color:{{ colors.getColor(class.category).foreground }}>**{{class.category.asText}}**
+                    {%if class.getCommentsAsString %}<color:{{ colors.getColor(class.category).foreground }}>{{ class.getCommentsAsString }}{% endif %}
                     {% if options.withMethodDisplay %}
+                        ---
                         {% for method in class.methods %}
-                          {% if method.definedInternally %}+{% else %}-{% endif %} {{method.methodName.name}}()
+                          <color:{{ colors.getColor(class.category).foreground }}>{% if method.definedInternally %}+{% else %}-{% endif %} {{method.methodName.name}}()
                         {% endfor %}        
                     {% endif %}
+
                 }
                 {% endfor %}        
 
@@ -129,5 +139,20 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
                 ],
             ],
         )->getContent(false);
+    }
+
+    /**
+     * @psalm-suppress PossiblyNullArrayAccess
+     * @psalm-suppress PossiblyUndefinedArrayOffset
+     * @psalm-suppress PossiblyNullOperand
+     */
+    private function getForegroundColor(string $rgbColor): string
+    {
+        [$red, $green, $blue] = sscanf($rgbColor, '#%02x%02x%02x');
+        if (((int) $red * 0.299 + (int) $green * 0.587 + (int) $blue * 0.114) > 186) {
+            return '#000000';
+        }
+
+        return '#ffffff';
     }
 }

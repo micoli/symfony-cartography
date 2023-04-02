@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Micoli\SymfonyCartography\Service\Categorizer;
+namespace Micoli\SymfonyCartography\Service\Categorizer\Coloring;
 
+use Micoli\SymfonyCartography\Service\Categorizer\ClassCategoryInterface;
 use ParseError;
 
 final class ClassCategoryColoring

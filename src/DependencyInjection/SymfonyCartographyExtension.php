@@ -42,7 +42,7 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
         $codeBaseAnalyserDefinition->setArgument('$srcRoots', $mergedConfig['sources']);
 
         $plantUmlDefinition = $container->getDefinition(PlantUmlGraphGenerator::class);
-        $plantUmlDefinition->setArgument('$categoryColors', $mergedConfig['colors']);
+        $plantUmlDefinition->setArgument('$categoryColorsParameter', $mergedConfig['colors']);
 
         $classFiltersDefinition = $container->getDefinition(ClassCommonFilter::class);
         $classFiltersDefinition->setArgument('$rules', $mergedConfig['filters']['classes']['rules']);
