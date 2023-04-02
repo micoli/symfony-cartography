@@ -44,3 +44,7 @@ symfony_cartography:
       method: dispatch
     - class: App\Infrastructure\Bus\MessengerEventDispatcher
       method: dispatch
+  graph:
+    withMethodDisplay: false
+    withMethodArrows: false
+    leftToRightDirection: false

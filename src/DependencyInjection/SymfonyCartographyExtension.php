@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DependencyInjection;
 
+use Micoli\SymfonyCartography\Profiler\SymfonyCartographyCollector;
 use Micoli\SymfonyCartography\Service\Categorizer\ClassCategoryInterface;
 use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseAnalyser;
 use Micoli\SymfonyCartography\Service\Filters\ClassesFilter\CommonFilter as ClassCommonFilter;
@@ -25,6 +26,11 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
          *     sources: list<string>,
          *     colors: list<array{class: ClassCategoryInterface,color:string}>,
          *     messenger_dispatchers: list<array{class: class-string, method: string}>,
+         *     graph: array{
+         *         withMethodDisplay: bool,
+         *         withMethodArrows: bool,
+         *         leftToRightDirection: bool
+         *     },
          *     filters: array{
          *         classes: array{
          *             rules: list<string>
@@ -47,6 +53,9 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
 
         $plantUmlDefinition = $container->getDefinition(PlantUmlGraphGenerator::class);
         $plantUmlDefinition->setArgument('$categoryColorsParameter', $mergedConfig['colors']);
+        $plantUmlDefinition->setArgument('$graphOptionsWithMethodDisplay', $mergedConfig['graph']['withMethodDisplay']);
+        $plantUmlDefinition->setArgument('$graphOptionsWithMethodArrows', $mergedConfig['graph']['withMethodArrows']);
+        $plantUmlDefinition->setArgument('$graphOptionsLeftToRightDirection', $mergedConfig['graph']['leftToRightDirection']);
 
         $classFiltersDefinition = $container->getDefinition(ClassCommonFilter::class);
         $classFiltersDefinition->setArgument('$rules', $mergedConfig['filters']['classes']['rules']);

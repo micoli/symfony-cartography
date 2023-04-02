@@ -17,6 +17,7 @@ use Twig\Environment;
 final class PlantUmlGraphGenerator implements GraphGeneratorInterface
 {
     private ClassCategoryColoring $categoryColors;
+    private GraphOptions $graphOptions;
 
     /**
      * @param list<array{
@@ -28,7 +29,16 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
         private readonly Environment $environment,
         private readonly HttpClientInterface $httpClient,
         array $categoryColorsParameter,
+        bool $graphOptionsWithMethodDisplay,
+        bool $graphOptionsWithMethodArrows,
+        bool $graphOptionsLeftToRightDirection,
     ) {
+        $this->graphOptions = new GraphOptions(
+            $graphOptionsWithMethodDisplay,
+            $graphOptionsWithMethodArrows,
+            $graphOptionsLeftToRightDirection,
+        );
+
         $this->categoryColors = new ClassCategoryColoring(array_reduce(
             $categoryColorsParameter,
             /**
@@ -58,7 +68,7 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
          * @var MethodCall $call
          */
         foreach ($enrichedClasses->getMethodCalls() as [$class, $method, $call]) {
-            if($graphOptions->withMethodArrows){
+            if ($graphOptions->withMethodArrows) {
                 $idFromMethod = $this->getIdFromMethod($call->from);
                 $idToMethod = $this->getIdFromMethod($call->to);
                 $calls[$call->getClass2classHash()] = [
@@ -66,7 +76,7 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
                     'to' => $idToMethod,
                     'label' => $call->label,
                 ];
-            }else{
+            } else {
                 $calls[$call->getClass2classHash()] = [
                     'from' => $call->from->namespacedName,
                     'to' => $call->to->namespacedName,
@@ -104,6 +114,7 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
                 @enduml
                 TEMPLATE
         );
+
         return $template->render([
             'enrichedClasses' => $enrichedClasses,
             'calls' => $calls,
@@ -121,18 +132,18 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
         );
     }
 
-    public function source(EnrichedClasses $enrichedClasses): string
+    public function source(EnrichedClasses $enrichedClasses, ?GraphOptions $graphOptions = null): string
     {
-        return $this->generate($enrichedClasses, new GraphOptions(false,false,true));
+        return $this->generate($enrichedClasses, $graphOptions ?? $this->graphOptions);
     }
 
-    public function svg(EnrichedClasses $enrichedClasses): string
+    public function svg(EnrichedClasses $enrichedClasses, ?GraphOptions $graphOptions = null): string
     {
         return $this->httpClient->request(
             'POST',
             'http://127.0.0.1:8080/svg/',
             [
-                'body' => $this->source($enrichedClasses),
+                'body' => $this->source($enrichedClasses, $graphOptions),
                 'headers' => [
                     'Accept' => 'image/svg+xml',
                     'Content-Type' => 'text/plain',
