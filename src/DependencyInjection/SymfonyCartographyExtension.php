@@ -9,6 +9,7 @@ use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseAnalyser;
 use Micoli\SymfonyCartography\Service\Filters\ClassesFilter\CommonFilter as ClassCommonFilter;
 use Micoli\SymfonyCartography\Service\Filters\MethodCallFilter\CommonFilter as MethodCallCommonFilter;
 use Micoli\SymfonyCartography\Service\Graph\PlantUmlGraphGenerator;
+use Micoli\SymfonyCartography\Service\Symfony\MessengerAnalyser;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;

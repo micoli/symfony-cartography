@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\Service\Symfony;
 
-use App\Infrastructure\Bus\MessengerCommandBus;
-use App\Infrastructure\Bus\MessengerEventDispatcher;
 use LogicException;
 use Micoli\SymfonyCartography\DataStructures\MessengerHandlers;
 use Micoli\SymfonyCartography\Model\AnalyzedCodeBase;
@@ -30,15 +28,23 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
     use BuildDebugContainerTrait;
 
     private ContainerInterface $container;
+    /** @var list<string> */
+    private array $dispatcherMethods;
 
+    /** @param list<array{class: class-string, method: string}> $dispatchers */
     public function __construct(
         #[Autowire(service: 'service_container')]
         ContainerInterface $container,
         private readonly LoggerInterface $logger,
         private readonly SymfonyHelper $symfonyHelper,
         private readonly KernelInterface $kernel,
+        private readonly array $dispatchers,
     ) {
         $this->container = $container;
+        $this->dispatcherMethods = array_map(
+            fn (array $method) => sprintf('%s::%s', $method['class'], $method['method']),
+            $dispatchers,
+        );
     }
 
     public function analyze(AnalyzedCodeBase $analyzedCodebase): MessengerHandlers
@@ -171,10 +177,8 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
         /** @var MessengerHandlers $messengerHandlers */
         $messengerHandlers = $analyzedCodebase->extensionResultStore->offsetGet(MessengerAnalyser::class);
 
-        $commandDispatchMethodName = new MethodName(MessengerCommandBus::class, 'dispatch');
-        $eventDispatchMethodName = new MethodName(MessengerEventDispatcher::class, 'dispatch');
         foreach ($analyzedCodebase->enrichedClasses->getMethodCalls() as [$class, $method, $call]) {
-            if (!$call->to->equals($commandDispatchMethodName) && !$call->to->equals($eventDispatchMethodName)) {
+            if (!in_array((string) $call->to, $this->dispatcherMethods, true)) {
                 continue;
             }
             $method->getMethodCalls()->remove($call);
