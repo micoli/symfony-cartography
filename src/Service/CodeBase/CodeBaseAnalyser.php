@@ -25,7 +25,6 @@ final class CodeBaseAnalyser
 {
     public const ANALYZED_CODEBASE_CACHE_KEY = 'analyzed_codebase';
     private Finder $finder;
-    private FilesystemAdapter $cache;
     private Stopwatch $clock;
 
     /** @var IteratorAggregate<CodeBaseAnalyzerInterface> */
@@ -45,15 +44,14 @@ final class CodeBaseAnalyser
         private readonly ClassesFilter $classesFilter,
         private readonly MethodCallFilter $methodCallFilter,
         private readonly LoggerInterface $logger,
+        private readonly FilesystemAdapter $cache,
         #[TaggedIterator(CodeBaseAnalyzerInterface::class)]
         iterable $analyzers,
         #[TaggedIterator(CodeBaseWireInterface::class)]
         iterable $wirers,
-        string $cacheDir,
         private readonly array $srcRoots,
     ) {
         $this->finder = new Finder();
-        $this->cache = new FilesystemAdapter('symfony-cartography', 0, $cacheDir);
         $this->clock = new Stopwatch(true);
         $this->analyzers = $analyzers;
         $this->wirers = $wirers;

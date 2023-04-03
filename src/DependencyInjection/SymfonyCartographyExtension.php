@@ -7,6 +7,7 @@ namespace Micoli\SymfonyCartography\DependencyInjection;
 use Micoli\SymfonyCartography\Profiler\SymfonyCartographyCollector;
 use Micoli\SymfonyCartography\Service\Categorizer\ClassCategoryInterface;
 use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseAnalyser;
+use Micoli\SymfonyCartography\Service\CodeBase\Psalm\PsalmRunner;
 use Micoli\SymfonyCartography\Service\Filters\ClassesFilter\CommonFilter as ClassCommonFilter;
 use Micoli\SymfonyCartography\Service\Filters\MethodCallFilter\CommonFilter as MethodCallCommonFilter;
 use Micoli\SymfonyCartography\Service\Graph\PlantUmlGraphGenerator;
@@ -14,6 +15,8 @@ use Micoli\SymfonyCartography\Service\Symfony\MessengerAnalyser;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Parameter;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 final class SymfonyCartographyExtension extends ConfigurableExtension
@@ -50,6 +53,7 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
 
         $codeBaseAnalyserDefinition = $container->getDefinition(CodeBaseAnalyser::class);
         $codeBaseAnalyserDefinition->setArgument('$srcRoots', $mergedConfig['sources']);
+        $codeBaseAnalyserDefinition->setArgument('$cache', new Reference('symfony-cartography-cache'));
 
         $plantUmlDefinition = $container->getDefinition(PlantUmlGraphGenerator::class);
         $plantUmlDefinition->setArgument('$categoryColorsParameter', $mergedConfig['colors']);
@@ -66,6 +70,9 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
 
         $messengerAnalyserDefinition = $container->getDefinition(MessengerAnalyser::class);
         $messengerAnalyserDefinition->setArgument('$dispatchers', $mergedConfig['messenger_dispatchers']);
+
+        $psalmRunnerDefinition = $container->getDefinition(PsalmRunner::class);
+        $psalmRunnerDefinition->setArgument('$cacheDir', new Parameter('kernel.cache_dir'));
     }
 
     public function getAlias(): string

@@ -2,8 +2,6 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
-    bind:
-      string $cacheDir: '%kernel.cache_dir%'
 
   Micoli\SymfonyCartography\:
     resource: '../../src/'
@@ -18,3 +16,10 @@ services:
       $isDev: true
       $manifest: '%kernel.project_dir%/public/assets/manifest.json'
 #      $cache: '@vite_pool'
+
+  symfony-cartography-cache:
+    class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+    arguments:
+      $namespace: symfony-cartography
+      $defaultLifetime: 0
+      $directory: '%kernel.cache_dir%'

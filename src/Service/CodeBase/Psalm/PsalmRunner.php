@@ -8,12 +8,15 @@ use Micoli\SymfonyCartography\DataStructures\EnrichedClasses;
 use Micoli\SymfonyCartography\Service\CodeBase\Psalm\Plugin\StoreEventsAnalysisService;
 use Micoli\SymfonyCartography\Service\CodeBase\Psalm\Plugin\StoreEventsListener;
 use Micoli\SymfonyCartography\Service\CodeBase\Psalm\Plugin\StorePlugin;
-use Micoli\SymfonyCartography\Service\CodeBase\Psalm\Provider\FakeParserCacheProvider;
 use Psalm\Context;
 use Psalm\Internal\Analyzer\FileAnalyzer;
 use Psalm\Internal\Analyzer\ProjectAnalyzer;
 use Psalm\Internal\Codebase\TaintFlowGraph;
-use Psalm\Internal\Provider\FakeFileProvider;
+use Psalm\Internal\Provider\ClassLikeStorageCacheProvider;
+use Psalm\Internal\Provider\FileProvider;
+use Psalm\Internal\Provider\FileReferenceCacheProvider;
+use Psalm\Internal\Provider\FileStorageCacheProvider;
+use Psalm\Internal\Provider\ParserCacheProvider;
 use Psalm\Internal\Provider\Providers;
 use Psalm\Internal\RuntimeCaches;
 
@@ -26,11 +29,13 @@ final class PsalmRunner
 {
     /** @psalm-suppress PropertyNotSetInConstructor */
     private ProjectAnalyzer $projectAnalyzer;
+    private string $cacheDir;
 
     public function __construct(
         private readonly StoreEventsAnalysisService $afterMethodCallAnalysisService,
-        private readonly string $cacheDir,
+        string $cacheDir,
     ) {
+        $this->cacheDir = $cacheDir . '/psalm';
         $this->initEnvironment();
 
         RuntimeCaches::clearAll();
@@ -48,7 +53,7 @@ final class PsalmRunner
      */
     public function analyzeFiles(array $srcRoots, array $filePaths, EnrichedClasses $enrichedClasses): void
     {
-        $this->setup($this->cacheDir, $srcRoots);
+        $this->setup($srcRoots);
         $this->afterMethodCallAnalysisService->init($enrichedClasses);
         StoreEventsListener::initialize($this->afterMethodCallAnalysisService);
 
@@ -89,7 +94,7 @@ final class PsalmRunner
      *
      * @throws \Psalm\Exception\ConfigException
      */
-    public function setup(string $cacheDir, array $srcRoots): void
+    public function setup(array $srcRoots): void
     {
         $xmlPaths = array_map(fn (string $path) => sprintf('<directory name="%s" />', $path), $srcRoots);
         $xml = sprintf(
@@ -107,7 +112,7 @@ final class PsalmRunner
                 XML,
             implode('', $xmlPaths),
         );
-        $config = new Config($xml, [], $cacheDir);
+        $config = new Config($xml, [], $this->cacheDir);
         class_exists(StoreEventsListener::class);
 
         $config->addPluginClass(StorePlugin::class);
@@ -115,12 +120,20 @@ final class PsalmRunner
         $this->projectAnalyzer = new ProjectAnalyzer(
             $config,
             new Providers(
-                new FakeFileProvider(),
-                new FakeParserCacheProvider(),
+                new FileProvider(),
+                new ParserCacheProvider($config),
+                new FileStorageCacheProvider($config),
+                new ClassLikeStorageCacheProvider($config),
+                new FileReferenceCacheProvider($config),
             ),
         );
         $config->initializePlugins($this->projectAnalyzer);
 
         $this->projectAnalyzer->setPhpVersion('8.2', 'config');
+    }
+
+    public function clearCache(): void
+    {
+        Config::removeCacheDirectory($this->cacheDir);
     }
 }

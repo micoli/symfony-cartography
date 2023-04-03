@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Micoli\SymfonyCartography\Command;
 
 use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseAnalyser;
+use Micoli\SymfonyCartography\Service\CodeBase\Psalm\PsalmRunner;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +24,7 @@ final class CartographyCommand extends Command
 
     public function __construct(
         private readonly CodeBaseAnalyser $codeParser,
+        private readonly PsalmRunner $psalmRunner,
     ) {
         parent::__construct();
         $this->addOption('force', null, InputOption::VALUE_NONE, 'force cache refresh');
@@ -40,6 +42,9 @@ final class CartographyCommand extends Command
         $this->io->writeln('<comment>Analysing</comment>');
         /** @var bool $forceRefresh */
         $forceRefresh = $input->getOption('force');
+        if ($forceRefresh) {
+            $this->psalmRunner->clearCache();
+        }
         $analyzedCodebase = $this->codeParser->analyse($forceRefresh);
         foreach ($analyzedCodebase->getStatistics() as $analytic => $value) {
             $this->io->writeln(sprintf('<info>%s</info>: %d', $analytic, $value));
