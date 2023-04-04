@@ -28,6 +28,7 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
     public function __construct(
         private readonly Environment $environment,
         private readonly HttpClientInterface $httpClient,
+        private readonly string $plantUmlURI,
         array $categoryColorsParameter,
         bool $graphOptionsWithMethodDisplay,
         bool $graphOptionsWithMethodArrows,
@@ -141,7 +142,7 @@ final class PlantUmlGraphGenerator implements GraphGeneratorInterface
     {
         return $this->httpClient->request(
             'POST',
-            'http://127.0.0.1:8080/svg/',
+            $this->plantUmlURI,
             [
                 'body' => $this->source($enrichedClasses, $graphOptions),
                 'headers' => [

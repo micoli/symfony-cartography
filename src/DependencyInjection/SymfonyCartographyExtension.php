@@ -30,9 +30,10 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
          *     colors: list<array{class: ClassCategoryInterface,color:string}>,
          *     messenger_dispatchers: list<array{class: class-string, method: string}>,
          *     graph: array{
+         *         engine_uri: string,
          *         withMethodDisplay: bool,
          *         withMethodArrows: bool,
-         *         leftToRightDirection: bool
+         *         leftToRightDirection: bool,
          *     },
          *     filters: array{
          *         classes: array{
@@ -60,6 +61,7 @@ final class SymfonyCartographyExtension extends ConfigurableExtension
         $plantUmlDefinition->setArgument('$graphOptionsWithMethodDisplay', $mergedConfig['graph']['withMethodDisplay']);
         $plantUmlDefinition->setArgument('$graphOptionsWithMethodArrows', $mergedConfig['graph']['withMethodArrows']);
         $plantUmlDefinition->setArgument('$graphOptionsLeftToRightDirection', $mergedConfig['graph']['leftToRightDirection']);
+        $plantUmlDefinition->setArgument('$plantUmlURI', $mergedConfig['graph']['engine_uri']);
 
         $classFiltersDefinition = $container->getDefinition(ClassCommonFilter::class);
         $classFiltersDefinition->setArgument('$rules', $mergedConfig['filters']['classes']['rules']);

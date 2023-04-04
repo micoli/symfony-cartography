@@ -66,6 +66,9 @@ symfony_cartography:
     - class: App\Infrastructure\Bus\MessengerEventDispatcher
       method: dispatch
   graph:
+    engine: plantuml
+    engine_uri: https://kroki.io/plantuml/svg # http://127.0.0.1:8080/svg/ if local plantuml server
+#    engine_uri: http://127.0.0.1:8080/svg # http://127.0.0.1:8080/svg/ if local plantuml server
     withMethodDisplay: false # display methods in classes
     withMethodArrows: false # if disabled, only one arrow from a class to another is draw
     leftToRightDirection: false # if disabled graph is drawn top to bottom, else it is draw left To Right
@@ -120,7 +123,25 @@ Analyse done
 ```
 [//]: <> (command-placeholder-end)
 
-Tests
+- To use a local instance of plantuml
+`docker run -d -p 8080:8080 plantuml/plantuml-server:jetty`
+and in `config/packages/symfony_cartography.yaml`
+set
+    ```
+    symfony_cartography:
+      graph:
+        engine: plantuml
+        engine_uri: http://127.0.0.1:8080/svg
+    ```
+- else to use a public instance of kroki
+    ```
+    symfony_cartography:
+      graph:
+        engine: plantuml
+        engine_uri: https://kroki.io/plantuml/svg
+    ```
+
+- Tests
 -----
 
 Execute this command to run tests:
