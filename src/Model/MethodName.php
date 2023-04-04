@@ -6,6 +6,7 @@ namespace Micoli\SymfonyCartography\Model;
 
 final class MethodName
 {
+    /** @param class-string $namespacedName */
     public function __construct(
         public readonly string $namespacedName,
         public readonly string $name,
@@ -35,6 +36,7 @@ final class MethodName
             [$namespacedName, $method] = [$namespacedMethod, '__invoke'];
         }
 
+        /** @var class-string $namespacedName */
         return new self($namespacedName, $method);
     }
 

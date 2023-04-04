@@ -79,6 +79,7 @@ final class ClassParser
         return $results;
     }
 
+    /** @param  class-string $namespacedName */
     public function addInternalMethods(string $namespacedName, EnrichedClass $enrichedClass, ReflectionClass $reflectedClass, Node\Stmt\Class_ $class): void
     {
         foreach ($class->getMethods() as $classMethod) {

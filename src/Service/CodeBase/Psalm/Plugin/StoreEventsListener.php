@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\Service\CodeBase\Psalm\Plugin;
 
-use Psalm\Plugin\EventHandler\AfterClassLikeAnalysisInterface;
 use Psalm\Plugin\EventHandler\AfterMethodCallAnalysisInterface;
-use Psalm\Plugin\EventHandler\Event\AfterClassLikeAnalysisEvent;
 use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 
-final class StoreEventsListener implements AfterMethodCallAnalysisInterface, AfterClassLikeAnalysisInterface
+final class StoreEventsListener implements AfterMethodCallAnalysisInterface
 {
     private static ?StoreEventsAnalysisService $service;
 
@@ -22,11 +20,5 @@ final class StoreEventsListener implements AfterMethodCallAnalysisInterface, Aft
     {
         assert(self::$service !== null);
         self::$service->afterMethodCallAnalysis($event);
-    }
-
-    public static function afterStatementAnalysis(AfterClassLikeAnalysisEvent $event): void
-    {
-        assert(self::$service !== null);
-        self::$service->afterClassLikeAnalysis($event);
     }
 }

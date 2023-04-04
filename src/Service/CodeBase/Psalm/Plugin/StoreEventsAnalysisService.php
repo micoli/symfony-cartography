@@ -8,14 +8,12 @@ use LogicException;
 use Micoli\SymfonyCartography\DataStructures\EnrichedClasses;
 use Micoli\SymfonyCartography\DataStructures\MethodCallArguments;
 use Micoli\SymfonyCartography\DataStructures\MethodCallArgumentUnion;
-use Micoli\SymfonyCartography\DataStructures\MethodNames;
 use Micoli\SymfonyCartography\Model\EnrichedMethod;
 use Micoli\SymfonyCartography\Model\MethodCall;
 use Micoli\SymfonyCartography\Model\MethodCallArgument;
 use Micoli\SymfonyCartography\Model\MethodName;
 use PhpParser\Node\Arg;
 use Psalm\Internal\Analyzer\MethodAnalyzer;
-use Psalm\Plugin\EventHandler\Event\AfterClassLikeAnalysisEvent;
 use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 use Psalm\Storage\MethodStorage;
 use Psalm\Type\Atomic;
@@ -51,22 +49,16 @@ final class StoreEventsAnalysisService
         }
         /** @var EnrichedMethod $method */
         $method = $callerClass->getMethods()->get($methodCall->from->name);
-        // $method->addMethodCalls(new MethodNames([$methodCall->to]));
         $method->addMethodCalls($methodCall);
-    }
-
-    public function afterClassLikeAnalysis(AfterClassLikeAnalysisEvent $event): void
-    {
-        // todo
-        if (str_ends_with($event->getClasslikeStorage()->name, 'Entity\\User')) {
-            // dd($event->getClasslikeStorage());
-        }
-        // $method->addMethodCalls($methodCall);
     }
 
     private function getMethodCall(AfterMethodCallAnalysisEvent $event): MethodCall
     {
-        /** @psalm-suppress PossiblyUndefinedArrayOffset */
+        /**
+         * @var class-string $calledNamespacedName
+         *
+         * @psalm-suppress PossiblyUndefinedArrayOffset
+         */
         [$calledNamespacedName, $_] = explode('::', $event->getMethodId(), 2);
         $expr = $event->getExpr();
 
@@ -104,8 +96,11 @@ final class StoreEventsAnalysisService
         /** @var MethodStorage $functionStorage */
         $functionStorage = $instance->getFunctionLikeStorage();
 
+        /** @var class-string $className */
+        $className = (string) $functionStorage->defining_fqcln;
+
         return new MethodName(
-            (string) $functionStorage->defining_fqcln,
+            $className,
             (string) $functionStorage->cased_name,
         );
     }
