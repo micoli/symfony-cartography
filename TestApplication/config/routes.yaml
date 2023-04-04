@@ -18,6 +18,7 @@ controllers:
     defaults:
         _locale: '%locale%'
 
-_symfony_cartography:
-    resource: '@SymfonyCartographyBundle/Resources/config/routes.yaml'
-    prefix: /cartography
+when@dev:
+    _symfony_cartography:
+        resource: '@SymfonyCartographyBundle/Resources/config/routes.yaml'
+        prefix: /_cartography

@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
-#[Route('/graph')]
+#[Route('/graph', 'cartography_graph')]
 final class GraphController extends AbstractController
 {
     public function __construct(

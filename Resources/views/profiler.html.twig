@@ -10,10 +10,10 @@
     {% set text %}
         <div class="sf-toolbar-info-piece">
             {% if collector.enabled %}
-                {% for controller in collector.filteredControllers %}
+                {% for controller in collector.controllerClassNames %}
                 <p>{{ controller }}</p>
-                <div style="overflow: auto;height:500px;width:400px;">
-                    <img src="{{ enriched_class_svg(controller, true) }}" style="height:500px" />
+                <div style="overflow: auto;height:500px;width:500px;">
+                    <img src="{{ path('cartography_graph',{'className':controller}) }}" style="height:500px;" />
                 </div>
                 {% endfor %}
             {% else %}
@@ -34,6 +34,7 @@
 {% endblock %}
 
 {% block panel %}
+    {% set collectedData=cartography_collected_data(collector.controllers) %}
     <h2>Cartography</h2>
     {% if not collector.enabled %}
       Collector is disabled, please look at:
@@ -43,7 +44,7 @@
       </pre>
     {% endif %}
     <div class="metrics">
-        {% for statisticName,statistic in collector.statistics %}
+        {% for statisticName,statistic in collectedData.statistics %}
         <div class="metric">
             <span class="value">
                 {{ statistic }}
@@ -54,7 +55,7 @@
         {% endfor %}
     </div>
     <br/>
-    {% for controller in collector.filteredControllers %}
+    {% for controller in collectedData.controllers %}
         <h1>{{ controller  }}</h1>
         {#<pre>
             {{ enriched_class_source(controller, true) }}

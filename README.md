@@ -16,15 +16,28 @@ Requirements
 ------------
 
   * PHP 8.1.0 or higher;
-  * PDO-SQLite PHP extension enabled;
+  * PDO-SQLite PHP extension enabled for development;
 
 Installation
 ------------
 ```bash
 composer require --dev micoli/symfony-cartography
 ```
+- 
 - add the line in `config\bundles.php`
-`Micoli\SymfonyCartography\SymfonyCartographyBundle::class => ['dev' => true, 'test' => true],`
+
+```
+Micoli\SymfonyCartography\SymfonyCartographyBundle::class => ['dev' => true, 'test' => true],`
+```
+
+- add a route in `config/routes.yaml`
+
+```
+when@dev:
+    _symfony_cartography:
+        resource: '@SymfonyCartographyBundle/Resources/config/routes.yaml'
+        prefix: /_cartography
+```
 
 - and create `config/packages/symfony_cartography.yaml`
 

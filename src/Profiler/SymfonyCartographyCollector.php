@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\Profiler;
 
-use Micoli\SymfonyCartography\Model\AnalyzedCodeBase;
 use Micoli\SymfonyCartography\Model\MethodName;
-use Micoli\SymfonyCartography\Service\Categorizer\ClassCategory;
-use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseAnalyser;
-use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseFilters;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
@@ -23,8 +19,7 @@ use Throwable;
 
 /**
  * @property array{
- *     controllers: list<class-string>,
- *     statistics:array<string, int>,
+ *     controllers: list<MethodName>,
  *     enabled: bool
  *  } $data
  *
@@ -32,22 +27,12 @@ use Throwable;
  */
 final class SymfonyCartographyCollector extends AbstractDataCollector implements EventSubscriberInterface
 {
-    /**
-     * @psalm-suppress PropertyNotSetInConstructor
-     *
-     * @var list<array{request: Request, controller: callable}>
-     */
-    private array $controllers = [];
-    private AnalyzedCodeBase $analyzedCodeBase;
     private ?ReflectionMethod $parseControllerMethod;
     private ?RequestDataCollector $requestDataCollector;
 
     public function __construct(
-        private readonly CodeBaseAnalyser $codeParser,
-        private readonly CodeBaseFilters $codeBaseFilters,
         private readonly bool $enabled,
     ) {
-        $this->analyzedCodeBase = $this->enabled ? $this->codeParser->analyse() : AnalyzedCodeBase::createEmpty();
         $this->requestDataCollector = new RequestDataCollector(null);
         $reflectionClass = new ReflectionClass($this->requestDataCollector);
         $this->parseControllerMethod = $reflectionClass->getMethod('parseController');
@@ -64,37 +49,43 @@ final class SymfonyCartographyCollector extends AbstractDataCollector implements
     public function collect(Request $request, Response $response, Throwable $exception = null): void
     {
         $this->data['enabled'] = $this->enabled;
-        if (!$this->enabled) {
-            return;
-        }
-        foreach ($this->analyzedCodeBase->enrichedClasses as $enrichedClass) {
-            if ($enrichedClass->getCategory()->getValue() !== ClassCategory::controller->getValue()) {
-                continue;
-            }
-            foreach ($this->controllers as $controller) {
-                if ($this->parseController($controller['controller'])->namespacedName === $enrichedClass->namespacedName) {
-                    if (!in_array($enrichedClass->namespacedName, $this->data['controllers'], true)) {
-                        $this->data['controllers'][] = $enrichedClass->namespacedName;
-                    }
-                }
-            }
-        }
-        if (count($this->data['controllers']) === 1) {
-            $this->codeBaseFilters->filterOrphans($this->analyzedCodeBase->enrichedClasses);
-            $this->codeBaseFilters->filterFrom($this->analyzedCodeBase->enrichedClasses, $this->data['controllers'][0]);
-            $statistics = [];
-            foreach ($this->analyzedCodeBase->enrichedClasses as $enrichedClass) {
-                $category = $enrichedClass->getCategory()->asText();
-                $count = array_key_exists($category, $statistics) ? $statistics[$category] : 0;
-                $statistics[$category] = $count + 1;
-            }
-            $this->data['statistics'] = $statistics;
-        }
     }
 
     public function getData(): array|Data
     {
         return $this->data;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->data['enabled'];
+    }
+
+    /** @return list<MethodName> */
+    public function getControllers(): array
+    {
+        return $this->data['controllers'] ?? [];
+    }
+
+    /** @return list<class-string> */
+    public function getControllerClassNames(): array
+    {
+        return array_map(fn (MethodName $method) => $method->namespacedName, $this->data['controllers'] ?? []);
+    }
+
+    public function onKernelController(ControllerEvent $event): void
+    {
+        if (!$this->enabled) {
+            return;
+        }
+        $this->data['controllers'][] = $this->parseController($event->getController());
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            KernelEvents::CONTROLLER => 'onKernelController',
+        ];
     }
 
     private function parseController(callable $controller): MethodName
@@ -110,40 +101,5 @@ final class SymfonyCartographyCollector extends AbstractDataCollector implements
             $parsedController['class'],
             $parsedController['method'] === null ? '__invoke' : $parsedController['method'],
         );
-    }
-
-    public function isEnabled(): bool
-    {
-        return $this->data['enabled'];
-    }
-
-    /** @return list<class-string> */
-    public function getFilteredControllers(): array
-    {
-        return $this->data['controllers'] ?? [];
-    }
-
-    /** @return array<string, int> */
-    public function getStatistics(): array
-    {
-        return $this->data['statistics'] ?? [];
-    }
-
-    public function onKernelController(ControllerEvent $event): void
-    {
-        if (!$this->enabled) {
-            return;
-        }
-        $this->controllers[] = [
-            'request' => $event->getRequest(),
-            'controller' => $event->getController(),
-        ];
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            KernelEvents::CONTROLLER => 'onKernelController',
-        ];
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\TwigExtension;
 
+use Micoli\SymfonyCartography\Model\MethodName;
+use Micoli\SymfonyCartography\Service\Categorizer\ClassCategory;
 use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseAnalyser;
 use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseFilters;
 use Micoli\SymfonyCartography\Service\Graph\GraphGeneratorInterface;
@@ -25,6 +27,7 @@ final class SymfonyCartographyExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
+            new TwigFunction('cartography_collected_data', [$this, 'parseCollectedData'], []),
             new TwigFunction('enriched_class_svg', [$this, 'enrichedClassSvg'], ['is_safe' => ['html']]),
             new TwigFunction('enriched_class_source', [$this, 'enrichedClassPlantuml'], []),
         ];
@@ -65,5 +68,45 @@ final class SymfonyCartographyExtension extends AbstractExtension
             fn ($matches) => ' ' . $matches[0],
             $camelCaseString,
         );
+    }
+
+    /**
+     * @param list<MethodName> $collectedControllers
+     *
+     * @return array{controllers:list<class-string>, statistics: array<string, int>}
+     */
+    public function parseCollectedData(array $collectedControllers): array
+    {
+        $analyzedCodeBase = $this->codeParser->analyse();
+
+        $controllers = [];
+        foreach ($collectedControllers as $controller) {
+            foreach ($analyzedCodeBase->enrichedClasses as $enrichedClass) {
+                if ($enrichedClass->getCategory()->getValue() !== ClassCategory::controller->getValue()) {
+                    continue;
+                }
+                if ($controller->namespacedName === $enrichedClass->namespacedName) {
+                    if (!in_array($enrichedClass->namespacedName, $controllers, true)) {
+                        $controllers[] = $enrichedClass->namespacedName;
+                    }
+                }
+            }
+        }
+
+        $statistics = [];
+        if (count($controllers) === 1) {
+            $this->codeBaseFilters->filterOrphans($analyzedCodeBase->enrichedClasses);
+            $this->codeBaseFilters->filterFrom($analyzedCodeBase->enrichedClasses, $controllers[0]);
+            foreach ($analyzedCodeBase->enrichedClasses as $enrichedClass) {
+                $category = $enrichedClass->getCategory()->asText();
+                $count = array_key_exists($category, $statistics) ? $statistics[$category] : 0;
+                $statistics[$category] = $count + 1;
+            }
+        }
+
+        return [
+            'controllers' => $controllers,
+            'statistics' => $statistics,
+        ];
     }
 }
