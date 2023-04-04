@@ -5,18 +5,27 @@ symfony_cartography:
   filters:
     classes:
       rules:
-        - '+App\'
-        - '-App\Domain\DataFixtures'
+        - '+App\' # all classes in namespace 'App\' will be excluding
+        - '-App\Domain\DataFixtures' # except those starting by 'App\Domain\DataFixtures'
     method_calls:
-      exclude_loopback: true
+      exclude_loopback: true #display sameClasse to sameClasse arrows
       rules:
-      - '-Twig\'
+      - '-Twig\' # do not display call towards classes in 'twig' namespace
       - '-ReflectionFunctionAbstract'
       - '-Doctrine\'
       - '-Symfony\'
       - '-Webmozart\'
       - '-Psr\'
-  colors:
+  messenger_dispatchers: # Class/Method used to wire event trough messenger buses
+    - class: App\Infrastructure\Bus\MessengerCommandBus
+      method: dispatch
+    - class: App\Infrastructure\Bus\MessengerEventDispatcher
+      method: dispatch
+  graph:
+    withMethodDisplay: false # display methods in classes
+    withMethodArrows: false # if disabled, only one arrow from a class to another is draw
+    leftToRightDirection: false # if disabled graph is drawn top to bottom, else it is draw left To Right
+  colors: # colors used in graph
       - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::undefined
         color: '#033270'
       - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::doctrineEntity
@@ -39,12 +48,3 @@ symfony_cartography:
         color: '#65010c'
       - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::symfonyEvent
         color: '#f29479'
-  messenger_dispatchers:
-    - class: App\Infrastructure\Bus\MessengerCommandBus
-      method: dispatch
-    - class: App\Infrastructure\Bus\MessengerEventDispatcher
-      method: dispatch
-  graph:
-    withMethodDisplay: false
-    withMethodArrows: false
-    leftToRightDirection: false

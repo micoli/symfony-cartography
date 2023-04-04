@@ -40,17 +40,17 @@ when@dev:
 ```
 
 - and create `config/packages/symfony_cartography.yaml`
-
+[//]: <> (include-placeholder-start "./TestApplication/config/packages/symfony_cartography.yaml")
 ```
 symfony_cartography:
-  enabled: true # enable or disable the collection of request controllers identification and the refreshing of the analyzed codebase
-  sources: # paths you want to be analyzed
+  enabled: true
+  sources:
     - '%kernel.project_dir%/src'
   filters:
     classes:
-      rules: 
+      rules:
         - '+App\' # all classes in namespace 'App\' will be excluding
-        - '-App\Domain\DataFixtures' # except thos starting by 'App\Domain\DataFixtures' 
+        - '-App\Domain\DataFixtures' # except those starting by 'App\Domain\DataFixtures'
     method_calls:
       exclude_loopback: true #display sameClasse to sameClasse arrows
       rules:
@@ -68,7 +68,7 @@ symfony_cartography:
   graph:
     withMethodDisplay: false # display methods in classes
     withMethodArrows: false # if disabled, only one arrow from a class to another is draw
-    leftToRightDirection: false # if disabled graph is drawn top to bottom, else it is draw left To Right 
+    leftToRightDirection: false # if disabled graph is drawn top to bottom, else it is draw left To Right
   colors: # colors used in graph
       - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::undefined
         color: '#033270'
@@ -92,7 +92,10 @@ symfony_cartography:
         color: '#65010c'
       - class: !php/enum Micoli\SymfonyCartography\Service\Categorizer\ClassCategory::symfonyEvent
         color: '#f29479'
+
 ```
+[//]: <> (include-placeholder-end)
+
 
 Usage
 -----
@@ -100,6 +103,22 @@ Usage
 ![toolbar](docs/toolbar.png)
 - in `webProfiler` page a new section called `cartography` is present
 ![toolbar](docs/profiler.png)
+
+
+- To clear inner psalm cache and refresh analysedCodebase 
+`bin/console code:cartography --force`
+
+[//]: <> (command-placeholder-start "bin/console code:cartography --force")
+```
+Analysing
+enrichedClasses: 56
+methods: 25
+method calls: 73
+interfaceImplements: 34
+classInterfaces: 35
+Analyse done
+```
+[//]: <> (command-placeholder-end)
 
 Tests
 -----

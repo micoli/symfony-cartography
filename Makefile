@@ -18,3 +18,4 @@ tests-application:
 .PHONY: tests-all
 tests-all: static-fix
 	vendor/bin/phpunit tests
+	./update-doc.py
