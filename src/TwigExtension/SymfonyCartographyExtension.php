@@ -28,8 +28,7 @@ final class SymfonyCartographyExtension extends AbstractExtension
     {
         return [
             new TwigFunction('cartography_collected_data', [$this, 'parseCollectedData'], []),
-            new TwigFunction('enriched_class_svg', [$this, 'enrichedClassSvg'], ['is_safe' => ['html']]),
-            new TwigFunction('enriched_class_source', [$this, 'enrichedClassPlantuml'], []),
+            new TwigFunction('enriched_class_html', [$this, 'enrichedClassHtml'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -40,25 +39,9 @@ final class SymfonyCartographyExtension extends AbstractExtension
         ];
     }
 
-    public function enrichedClassSvg(string $classname, bool $base64 = false): string
+    public function enrichedClassHtml(array $classnames, bool $base64 = false): string
     {
-        $enrichedClasses = $this->codeParser->analyse()->enrichedClasses;
-        $this->codeBaseFilters->filterOrphans($enrichedClasses);
-        $this->codeBaseFilters->filterFrom($enrichedClasses, $classname);
-        if ($base64) {
-            return sprintf('data:image/svg+xml;base64,%s', base64_encode($this->graphGenerator->svg($enrichedClasses)));
-        }
-
-        return $this->graphGenerator->svg($enrichedClasses);
-    }
-
-    public function enrichedClassPlantuml(string $classname): string
-    {
-        $enrichedClasses = $this->codeParser->analyse()->enrichedClasses;
-        $this->codeBaseFilters->filterOrphans($enrichedClasses);
-        $this->codeBaseFilters->filterFrom($enrichedClasses, $classname);
-
-        return $this->graphGenerator->source($enrichedClasses);
+        return $this->graphGenerator->html($classnames);
     }
 
     public function convertCamelCaseToHaveSpacesFilter(string $camelCaseString): string
@@ -96,13 +79,14 @@ final class SymfonyCartographyExtension extends AbstractExtension
         $statistics = [];
         if (count($controllers) === 1) {
             $this->codeBaseFilters->filterOrphans($analyzedCodeBase->enrichedClasses);
-            $this->codeBaseFilters->filterFrom($analyzedCodeBase->enrichedClasses, $controllers[0]);
+            $this->codeBaseFilters->filterFrom($analyzedCodeBase->enrichedClasses, $controllers);
             foreach ($analyzedCodeBase->enrichedClasses as $enrichedClass) {
                 $category = $enrichedClass->getCategory()->asText();
                 $count = array_key_exists($category, $statistics) ? $statistics[$category] : 0;
                 $statistics[$category] = $count + 1;
             }
         }
+        $this->codeBaseFilters->filterUnknownMethodCalls($analyzedCodeBase->enrichedClasses);
 
         return [
             'controllers' => $controllers,

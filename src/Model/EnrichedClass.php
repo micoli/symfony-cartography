@@ -8,6 +8,7 @@ use JsonSerializable;
 use Micoli\SymfonyCartography\DataStructures\EnrichedMethods;
 use Micoli\SymfonyCartography\Service\Categorizer\ClassCategory;
 use Micoli\SymfonyCartography\Service\Categorizer\ClassCategoryInterface;
+use Micoli\SymfonyCartography\Service\ClassHelper;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class EnrichedClass implements JsonSerializable
@@ -86,6 +87,11 @@ final class EnrichedClass implements JsonSerializable
     public function getCommentsAsString(): string
     {
         return implode(PHP_EOL, $this->comments);
+    }
+
+    public function getNamespace(): string
+    {
+        return ClassHelper::extractNamespace($this->namespacedName);
     }
 
     public function getAttributes(): ParameterBag

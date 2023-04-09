@@ -66,9 +66,9 @@ symfony_cartography:
     - class: App\Infrastructure\Bus\MessengerEventDispatcher
       method: dispatch
   graph:
-    engine: plantuml
-    engine_uri: https://kroki.io/plantuml/svg # http://127.0.0.1:8080/svg/ if local plantuml server
-#    engine_uri: http://127.0.0.1:8080/svg # http://127.0.0.1:8080/svg/ if local plantuml server
+    engine: visjs # visjs|plantuml|cytoscape
+    engine_uri: https://kroki.io/plantuml/svg
+#    engine_uri: http://127.0.0.1:8080/svg # if local plantuml server
     withMethodDisplay: false # display methods in classes
     withMethodArrows: false # if disabled, only one arrow from a class to another is draw
     leftToRightDirection: false # if disabled graph is drawn top to bottom, else it is draw left To Right

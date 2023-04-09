@@ -8,9 +8,9 @@ use Micoli\SymfonyCartography\DataStructures\EnrichedClasses;
 
 interface GraphGeneratorInterface
 {
-    public function generate(EnrichedClasses $enrichedClasses, GraphOptions $graphOptions): string;
+    public static function getEngine(): GraphEngine;
 
-    public function source(EnrichedClasses $enrichedClasses): string;
+    public function html(array $classNames): string;
 
-    public function svg(EnrichedClasses $enrichedClasses): string;
+    public function data(EnrichedClasses $enrichedClasses, ?GraphOptions $graphOptions = null): array;
 }

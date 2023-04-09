@@ -1,0 +1,61 @@
+<style>
+    #graph_network {
+        width: 95%;
+        height: 95%;
+        border: 1px solid lightgray;
+    }
+</style>
+<input type="checkbox" id="animate" checked>
+<div id="graph_network"></div>
+<script type="text/javascript">
+    const classNames = {{ classNames|json_encode|raw }};
+    const dataURL = {{ path('cartography_graph_data')|json_encode|raw }};
+
+    const scriptPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        document.body.appendChild(script);
+        script.onload = resolve;
+        script.onerror = reject;
+        script.async = true;
+        script.src = 'https://unpkg.com/vis-network/standalone/umd/vis-network.min.js';
+    });
+    const options = {
+        layout: {
+            hierarchical: {
+                enabled: true,
+                levelSeparation: 150,
+                nodeSpacing: 500,
+                treeSpacing: 200,
+                blockShifting: false,
+                edgeMinimization: true,
+                parentCentralization: true,
+                direction: 'UD',        // UD, DU, LR, RL
+                sortMethod: 'hubsize',  // hubsize, directed
+                shakeTowards: 'roots'  // roots, leaves
+            },
+        },
+        physics: {
+            hierarchicalRepulsion: {
+                avoidOverlap: 1,
+            },
+        },
+    }
+    let graphData = {nodes: [], edges: []};
+    const doLayout = () => {
+        options.layout.hierarchical.enabled = document.getElementById("animate").checked;
+        const network = new vis.Network(document.getElementById("graph_network"), graphData, options);
+    }
+    document.getElementById("animate").addEventListener("change", doLayout);
+    scriptPromise.then(() => {
+        fetch(dataURL + '?' + new URLSearchParams({classNames: classNames.join(',')}))
+            .then(response => response.json())
+            .then(data => {
+                graphData = {
+                    nodes: new vis.DataSet(data.nodes),
+                    edges: new vis.DataSet(data.edges),
+                }
+                doLayout();
+            })
+        ;
+    });
+</script>

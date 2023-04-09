@@ -1,0 +1,247 @@
+<style>
+    #graph_network_container {
+        position: relative;
+    }
+
+    #graph_network {
+        position: absolute;
+        width: 900px;
+        height: 900px;
+        z-index: 999;
+        margin-left: 290px;
+        top: 0px;
+        left: 200px;
+    }
+
+    h1 {
+        opacity: 1;
+        color: #555;
+        font-size: 15px;
+        font-weight: bold;
+        padding-top: 5px;
+    }
+
+    .sidepanel {
+        left: 0;
+        top: auto;
+        position: absolute;
+        height: 900px;
+        width: 190px;
+        z-index: 1000;
+        float: left;
+        overflow-x: hidden;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        transition: 0s;
+    }
+
+    table {
+        margin-left: 4px;
+        margin-right: auto;
+        table-layout: fixed;
+    }
+
+    table td {
+        padding: 0px 8px 8px 8px;
+        text-decoration: none;
+        font-size: 13px;
+        color: #555;
+        transition: 0.3s;
+        vertical-align: middle;
+    }
+
+    .button {
+        font-size: 15px;
+        color: #555;
+        cursor: pointer;
+        padding: 5px 10px;
+        border: none;
+        margin-bottom: 5px;
+    }
+
+    .textField {
+        padding-left: 5px;
+    }
+
+    .checkbox {
+        margin-left: 0px;
+    }
+
+    .button:hover {
+        background-color: #0f0;
+    }
+
+    .btn-group-sm > .btn, .btn-sm {
+        font-size: 13px;
+    }
+
+    .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+        color: #fff;
+    }
+
+    .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .open > .dropdown-toggle.btn-primary {
+        color: #fff;
+    }
+
+    .form-control-sm {
+        font-size: 13px
+    }
+
+    .custom-select-sm {
+        font-size: 13px
+    }
+
+    .custom-control-label {
+        padding-top: 2px;
+    }
+
+    .custom-control-input:checked ~ .custom-control-label::before {
+        color: #fff;
+    }
+</style>
+<div id="graph_network_container">
+    <div class="sidepanel">
+        <table>
+            <tr>
+                <td colspan="2">
+                    <button id="doLayout" class="btn btn-primary btn-sm mb-2 ml-2">doLayout</button>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="add-on layout-text" title="Whether to perform animation after layout"> Animate </span>
+                </td>
+                <td>
+                    <div class="custom-control custom-control-inline custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="animate" name="animate" checked>
+                        <label class="custom-control-label" for="animate"></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="add-on layout-text" title="Whether to perform animation after layout"> Animate </span>
+                </td>
+                <td>
+                    <div class="custom-control custom-control-inline custom-checkbox">
+                        <select type="checkbox" class="custom-control-input" id="layout_name" name="layout_name">
+                            <option value="breadthfirst">breadthfirst</option>
+                            <option value="circle">circle</option>
+                            <option value="fcose">fcose</option>
+                            <option value="grid">grid</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="add-on layout-text"
+                          title="Whether to fit the viewport to the repositioned nodes"> Fit </span></td>
+                <td>
+                    <div class="custom-control custom-control-inline custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="fit" name="fit" checked>
+                        <label class="custom-control-label" for="fit"></label>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id='graph_network'></div>
+</div>
+
+<script>
+    const scriptDependencies = [
+        "https://unpkg.com/cytoscape/dist/cytoscape.min.js",
+        "https://unpkg.com/layout-base/layout-base.js",
+        "https://unpkg.com/cytoscape-layout-utilities/cytoscape-layout-utilities.js",
+        // "https://unpkg.com/cose-base/cose-base.js",
+        // "https://unpkg.com/cytoscape-fcose/cytoscape-fcose.js",
+    ]
+    const classNames = {{ classNames|json_encode|raw }};
+    const dataURL = {{ path('cartography_graph_data')|json_encode|raw }};
+
+    Promise.all(scriptDependencies.map(href => new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        document.body.appendChild(script);
+        script.onload = resolve;
+        script.onerror = reject;
+        script.async = true;
+        script.src = href;
+    })))
+        .then(() => fetch(`${dataURL}?` + new URLSearchParams({classNames: classNames.join(',')})))
+        .then(response => response.json())
+        .then(data => {
+            const nodes = data.nodes;
+            const edges = data.edges;
+            const elements = []
+                .concat(nodes.map(node => {
+                        return {
+                            group: 'nodes',
+                            data: {
+                                id: node.id,
+                                label: node.label,
+                                parent: node.category,
+                                shape: 'rectangle'
+                            },
+                        }
+                    })
+                ).concat(edges.map(edge => {
+                    return {
+                        group: 'edges',
+                        data: {
+                            id: `${edge.from}-${edge.to}`,
+                            source: edge.from,
+                            target: edge.to,
+                        }
+                    }
+                }))
+            const cy = window.cy = cytoscape({
+                container: document.getElementById('graph_network'),
+
+                ready: function () {
+                    let layoutUtilities = this.layoutUtilities({
+                        desiredAspectRatio: this.width() / this.height()
+                    });
+                    this.layout({name: 'breadthfirst', animationEasing: 'ease-out'}).run();
+                },
+
+                layout: {
+                    name: 'breadthfirst'
+                },
+
+                style: cytoscape.stylesheet()
+                    .selector('node')
+                    .css({
+                        'content': 'data(label)',
+                        'text-valign': 'center',
+                        'color': 'white',
+                        'shape': 'roundrectangle',
+                        'text-outline-width': 2,
+                        'text-outline-color': '#888',
+                        'background-color': '#888'
+                    })
+                    .selector(':selected')
+                    .css({
+                        'background-color': 'black',
+                        'line-color': 'black',
+                        'target-arrow-color': 'black',
+                        'source-arrow-color': 'black',
+                        'text-outline-color': 'black'
+                    }),
+
+                elements: elements
+            });
+
+            const doLayout = function () {
+                cy.layout({
+                    name: document.getElementById("layout_name").value,
+                    animate: document.getElementById("animate").checked,
+                    animationEasing: 'ease-out',
+                    fit: document.getElementById("fit").checked,
+                    step: "all"
+                }).run();
+            }
+            document.getElementById("doLayout").addEventListener("click", doLayout);
+            document.getElementById("layout_name").addEventListener("change", doLayout);
+            document.getElementById("animate").addEventListener("change", doLayout);
+            document.getElementById("fit").addEventListener("change", doLayout);
+
+        });
+</script>

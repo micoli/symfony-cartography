@@ -22,7 +22,7 @@ symfony_cartography:
     - class: App\Infrastructure\Bus\MessengerEventDispatcher
       method: dispatch
   graph:
-    engine: plantuml
+    engine: visjs # visjs|plantuml|cytoscape
     engine_uri: https://kroki.io/plantuml/svg
 #    engine_uri: http://127.0.0.1:8080/svg # if local plantuml server
     withMethodDisplay: false # display methods in classes

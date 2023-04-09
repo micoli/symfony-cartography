@@ -1,0 +1,25 @@
+@startuml
+{% if options.leftToRightDirection %}left to right direction
+{% endif %}
+skinparam ArrowThickness 3
+skinparam linetype polyline
+skinparam linetype ortho
+{% for className,class in enrichedClasses %}
+class {{className}} {{ colors.getColor(class.category).background }};text:{{ colors.getColor(class.category).foreground[1:] }} {
+    <color:{{ colors.getColor(class.category).foreground }}>**{{class.category.asText}}**
+    {%if class.getCommentsAsString %}<color:{{ colors.getColor(class.category).foreground }}>{{ class.getCommentsAsString }}
+    {% endif %}
+    {% if options.withMethodDisplay %}
+        ---
+        {% for method in class.methods %}
+          <color:{{ colors.getColor(class.category).foreground }}>{% if method.definedInternally %}+{% else %}-{% endif %} {{method.methodName.name}}()
+        {% endfor %}
+    {% endif %}
+
+}
+{% endfor %}
+
+{% for call in calls %}
+"{{call.from}}" ==> "{{call.to}}"
+{% endfor %}
+@enduml

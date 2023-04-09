@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DependencyInjection;
 
+use Micoli\SymfonyCartography\Service\Graph\GraphEngine;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -28,9 +29,9 @@ final class Configuration implements ConfigurationInterface
                             ->booleanNode('withMethodArrows')->defaultFalse()->end()
                             ->booleanNode('leftToRightDirection')->defaultFalse()->end()
                             ->scalarNode('engine')
-                                ->defaultValue('plantuml')
+                                ->defaultValue(GraphEngine::PLANTUML->value)
                                 ->validate()
-                                    ->ifNotInArray(['plantuml'])
+                                    ->ifNotInArray(array_map(fn (GraphEngine $graph) => $graph->value, GraphEngine::cases()))
                                     ->thenInvalid('Invalid graph engine %s')
                                 ->end()
                             ->end()

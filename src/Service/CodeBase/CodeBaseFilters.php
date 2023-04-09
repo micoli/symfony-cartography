@@ -11,10 +11,17 @@ use Micoli\SymfonyCartography\Model\MethodName;
 
 class CodeBaseFilters
 {
-    public function filterFrom(EnrichedClasses $enrichedClasses, string $className): void
+    /**
+     * @param list<string> $classNames
+     */
+    public function filterFrom(EnrichedClasses $enrichedClasses, array $classNames): void
     {
+        if (count($classNames) === 0) {
+            return;
+        }
         $connectedTo = [];
         $connectedFrom = [];
+        $filtered = [];
         /**
          * @var EnrichedClass $class
          * @var MethodName $method
@@ -31,10 +38,28 @@ class CodeBaseFilters
             }
             $connectedFrom[$call->to->namespacedName][] = $call->from->namespacedName;
         }
-        $filtered = $this->getNextCall($connectedTo, $className, []) + $this->getNextCall($connectedFrom, $className, []);
+        foreach ($classNames as $className) {
+            $filtered = $filtered
+                + $this->getNextCall($connectedTo, $className, [])
+                + $this->getNextCall($connectedFrom, $className, []);
+        }
         foreach ($enrichedClasses as $i => $class) {
             if (!array_key_exists($class->namespacedName, $filtered)) {
                 $enrichedClasses->remove($i);
+            }
+        }
+    }
+
+    public function filterUnknownMethodCalls(EnrichedClasses $enrichedClasses): void
+    {
+        foreach ($enrichedClasses as $class) {
+            foreach ($class->getMethods() as $method) {
+                foreach ($method->getMethodCalls() as $index => $call) {
+                    if ($enrichedClasses->offsetExists($call->to->namespacedName)) {
+                        continue;
+                    }
+                    $method->getMethodCalls()->offsetUnset($index);
+                }
             }
         }
     }
