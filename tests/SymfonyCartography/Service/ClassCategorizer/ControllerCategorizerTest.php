@@ -27,7 +27,7 @@ class ControllerCategorizerTest extends AbstractTestIntegration
 
     public function testIfItCategorizeAsASimpleController(): void
     {
-        $enrichedClass = new EnrichedClass('fake.php', BlogController::class, dirname(BlogController::class), []);
+        $enrichedClass = new EnrichedClass('fake.php', BlogController::class, dirname(BlogController::class), [], []);
         self::assertTrue($this->controllerCategorizer->support($enrichedClass, self::getAnalyzedCodeBase()));
         $this->controllerCategorizer->categorize($enrichedClass);
         self::assertEqualsCanonicalizing(ClassCategory::controller->getValue(), $enrichedClass->getCategory()->getValue());
@@ -37,7 +37,7 @@ class ControllerCategorizerTest extends AbstractTestIntegration
     public function testIfItCategorizeAsAnMulitpleRouteController(): void
     {
         $analyzed = self::getAnalyzedCodeBase();
-        $enrichedClass = new EnrichedClass('fake.php', UserController::class, dirname(UserController::class), []);
+        $enrichedClass = new EnrichedClass('fake.php', UserController::class, dirname(UserController::class), [], []);
         self::assertTrue($this->controllerCategorizer->support($enrichedClass, $analyzed));
         $this->controllerCategorizer->categorize($enrichedClass);
         self::assertEqualsCanonicalizing(ClassCategory::controller->getValue(), $enrichedClass->getCategory()->getValue());

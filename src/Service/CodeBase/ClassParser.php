@@ -57,8 +57,9 @@ final class ClassParser
             /** @var ?class-string $namespacedName */
             $namespacedName = $class->namespacedName?->toString();
             $className = $class->name?->name;
-            assert($namespacedName !== null);
-            assert($className !== null);
+            if ($namespacedName === null || $className === null) {
+                continue;
+            }
             try {
                 $reflectedClass = new ReflectionClass($namespacedName);
             } catch (ReflectionException $exception) {
@@ -70,6 +71,7 @@ final class ClassParser
                 $namespacedName,
                 $className,
                 $reflectedClass->getInterfaceNames(),
+                $this->getParentClasses($reflectedClass),
             );
             $this->addInternalMethods($namespacedName, $enrichedClass, $reflectedClass, $class);
             $this->addExtendedMethods($namespacedName, $enrichedClass, $reflectedClass);
@@ -79,7 +81,7 @@ final class ClassParser
         return $results;
     }
 
-    /** @param  class-string $namespacedName */
+    /** @param class-string $namespacedName */
     public function addInternalMethods(string $namespacedName, EnrichedClass $enrichedClass, ReflectionClass $reflectedClass, Node\Stmt\Class_ $class): void
     {
         foreach ($class->getMethods() as $classMethod) {
@@ -156,5 +158,20 @@ final class ClassParser
         }
 
         return $result;
+    }
+
+    /**
+     * @return class-string[]
+     */
+    public function getParentClasses(ReflectionClass $reflectedClass): array
+    {
+        $classes = [];
+        $class = $reflectedClass->getParentClass();
+        while ($class) {
+            $classes[] = $class->name;
+            $class = $class->getParentClass();
+        }
+
+        return $classes;
     }
 }

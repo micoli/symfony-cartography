@@ -29,6 +29,7 @@ final class EnrichedClass implements JsonSerializable
         public readonly string $namespacedName,
         public readonly string $name,
         public readonly array $interfaces,
+        public readonly array $extends,
     ) {
         $this->methods = new EnrichedMethods();
         $this->attributes = new ParameterBag();

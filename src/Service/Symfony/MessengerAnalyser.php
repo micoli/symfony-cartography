@@ -29,20 +29,18 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
 {
     use BuildDebugContainerTrait;
 
-    private ContainerInterface $container;
     /** @var list<string> */
     private array $dispatcherMethods;
 
     /** @param list<array{class: class-string, method: string}> $dispatchers */
     public function __construct(
         #[Autowire(service: 'service_container')]
-        ContainerInterface $container,
+        private readonly ContainerInterface $container,
         private readonly LoggerInterface $logger,
         private readonly SymfonyHelper $symfonyHelper,
         private readonly KernelInterface $kernel,
         private readonly array $dispatchers,
     ) {
-        $this->container = $container;
         $this->dispatcherMethods = array_map(
             fn (array $method) => sprintf('%s::%s', $method['class'], $method['method']),
             $dispatchers,

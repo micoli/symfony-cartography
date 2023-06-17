@@ -47,7 +47,7 @@ final class PlantUmlGraphGenerator extends AbstractGraphGenerator implements Gra
         );
     }
 
-    public function data(EnrichedClasses $enrichedClasses, ?GraphOptions $graphOptions = null): array
+    public function data(EnrichedClasses $enrichedClasses, GraphOptions $graphOptions = null): array
     {
         $graphOptions ??= $this->graphOptions;
         $calls = [];

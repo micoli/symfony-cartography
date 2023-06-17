@@ -22,7 +22,7 @@ final class VisJsGraphGenerator extends AbstractGraphGenerator implements GraphG
         return GraphEngine::VISJS;
     }
 
-    public function data(EnrichedClasses $enrichedClasses, ?GraphOptions $graphOptions = null): array
+    public function data(EnrichedClasses $enrichedClasses, GraphOptions $graphOptions = null): array
     {
         $calls = [];
         $ids = new GraphIds();

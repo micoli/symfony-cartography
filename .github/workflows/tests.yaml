@@ -25,7 +25,7 @@ jobs:
         strategy:
             matrix:
                 operating-system: ['ubuntu-latest']
-                php-version: ['8.1', '8.2']
+                php-version: ['8.2']
 
         steps:
             - name: "Checkout code"
@@ -68,7 +68,7 @@ jobs:
                 bin/console doctrine:fixture:load -e test --purge-with-truncate -n
 
             - name: "Run tests"
-              run: vendor/bin/phpunit ${{ env.PHPUNIT_FLAGS }}
+              run: vendor/bin/phpunit tests/SymfonyCartography/ ${{ env.PHPUNIT_FLAGS }}
 
             - name: Test Summary
               uses: mikepenz/action-junit-report@v3

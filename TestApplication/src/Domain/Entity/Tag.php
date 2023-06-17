@@ -38,9 +38,6 @@ class Tag implements JsonSerializable
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): string
     {
         return $this->name;

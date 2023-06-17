@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Specification\User;
 
-
 use App\Domain\Repository\UserRepositoryInterface;
 
 final readonly class UserSpecificationIsUnique implements UserSpecificationInterface
@@ -17,7 +16,6 @@ final readonly class UserSpecificationIsUnique implements UserSpecificationInter
     public function isSatisfiedBy(UserSpecificationDTO $userValidationDTO): bool
     {
         if ($this->userRepository->findOneByUsername($userValidationDTO->username) !== null) {
-
             return false;
         }
 

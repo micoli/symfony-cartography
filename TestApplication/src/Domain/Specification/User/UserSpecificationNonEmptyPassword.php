@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Specification\User;
 
-
 final readonly class UserSpecificationNonEmptyPassword implements UserSpecificationInterface
 {
     public function __construct(
@@ -21,7 +20,6 @@ final readonly class UserSpecificationNonEmptyPassword implements UserSpecificat
         $password = trim($password);
 
         if (!(strlen($password) > 4)) {
-
             return false;
         }
 
