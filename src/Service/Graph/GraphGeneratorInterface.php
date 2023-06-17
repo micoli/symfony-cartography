@@ -12,5 +12,5 @@ interface GraphGeneratorInterface
 
     public function html(array $classNames): string;
 
-    public function data(EnrichedClasses $enrichedClasses, ?GraphOptions $graphOptions = null): array;
+    public function data(EnrichedClasses $enrichedClasses, GraphOptions $graphOptions = null): array;
 }

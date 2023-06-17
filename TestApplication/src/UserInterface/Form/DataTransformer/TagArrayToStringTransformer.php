@@ -24,9 +24,6 @@ final class TagArrayToStringTransformer implements DataTransformerInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value): string
     {
         if ($value === null) {
@@ -37,8 +34,6 @@ final class TagArrayToStringTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @psalm-param string|null $value
      *
      * @psalm-return list<Tag>

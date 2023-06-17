@@ -18,17 +18,11 @@ final class PostVoter extends Voter
     public const EDIT = 'edit';
     public const SHOW = 'show';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function supports(string $attribute, mixed $subject): bool
     {
         return $subject instanceof Post && \in_array($attribute, [self::SHOW, self::EDIT, self::DELETE], true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

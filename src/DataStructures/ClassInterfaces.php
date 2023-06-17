@@ -23,5 +23,4 @@ final class ClassInterfaces extends MutableMap
         /** @psalm-suppress PossiblyNullReference */
         $this->get($class)->append($interface);
     }
-
 }

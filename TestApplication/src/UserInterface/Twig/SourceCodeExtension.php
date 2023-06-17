@@ -34,9 +34,6 @@ final class SourceCodeExtension extends AbstractExtension
         $this->controller = $controller;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         return [

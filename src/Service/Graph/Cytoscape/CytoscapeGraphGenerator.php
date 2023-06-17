@@ -21,7 +21,7 @@ final class CytoscapeGraphGenerator extends AbstractGraphGenerator implements Gr
         return GraphEngine::CYTOSCAPE;
     }
 
-    public function data(EnrichedClasses $enrichedClasses, ?GraphOptions $graphOptions = null): array
+    public function data(EnrichedClasses $enrichedClasses, GraphOptions $graphOptions = null): array
     {
         $calls = [];
         $ids = new GraphIds();
