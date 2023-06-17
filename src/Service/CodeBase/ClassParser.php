@@ -73,6 +73,7 @@ final class ClassParser
                 $namespacedName,
                 $className,
                 $reflectedClass->getInterfaceNames(),
+                $this->getParentClasses($reflectedClass),
             );
             $this->addInternalMethods($namespacedName, $enrichedClass, $reflectedClass, $class);
             $this->addExtendedMethods($namespacedName, $enrichedClass, $reflectedClass);
@@ -159,5 +160,20 @@ final class ClassParser
         }
 
         return $result;
+    }
+
+    /**
+     * @return class-string[]
+     */
+    public function getParentClasses(ReflectionClass $reflectedClass): array
+    {
+        $classes = [];
+        $class = $reflectedClass->getParentClass();
+        while ($class) {
+            $classes[] = $class->name;
+            $class = $class->getParentClass();
+        }
+
+        return $classes;
     }
 }

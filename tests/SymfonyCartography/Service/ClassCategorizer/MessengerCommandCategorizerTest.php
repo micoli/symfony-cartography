@@ -26,7 +26,7 @@ class MessengerCommandCategorizerTest extends AbstractTestIntegration
 
     public function testIfItCategorizeAsACommand(): void
     {
-        $enrichedClass = new EnrichedClass('fake.php', CreateActionCommand::class, basename(CreateActionCommand::class), [CommandInterface::class]);
+        $enrichedClass = new EnrichedClass('fake.php', CreateActionCommand::class, basename(CreateActionCommand::class), [CommandInterface::class], []);
         self::assertTrue($this->messengerCommandCategorizer->support($enrichedClass, self::getAnalyzedCodeBase()));
         $this->messengerCommandCategorizer->categorize($enrichedClass);
         self::assertEqualsCanonicalizing(ClassCategory::messengerCommand->getValue(), $enrichedClass->getCategory()->getValue());

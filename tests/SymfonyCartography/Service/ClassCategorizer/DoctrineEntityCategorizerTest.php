@@ -25,7 +25,7 @@ class DoctrineEntityCategorizerTest extends AbstractTestIntegration
 
     public function testIfItCategorizeAsADoctrineEntity(): void
     {
-        $enrichedClass = new EnrichedClass('fake.php', User::class, dirname(User::class), []);
+        $enrichedClass = new EnrichedClass('fake.php', User::class, dirname(User::class), [], []);
         self::assertTrue($this->doctrineEntityCategorizer->support($enrichedClass, self::getAnalyzedCodeBase()));
         $this->doctrineEntityCategorizer->categorize($enrichedClass);
         self::assertEqualsCanonicalizing(ClassCategory::doctrineEntity->getValue(), $enrichedClass->getCategory()->getValue());
