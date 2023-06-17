@@ -4,22 +4,12 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DataStructures;
 
-use IteratorAggregate;
-use JsonSerializable;
+use Micoli\Multitude\Set\MutableSet;
 use Micoli\SymfonyCartography\Model\MethodCall;
-use Ramsey\Collection\AbstractSet;
 
 /**
- * @extends AbstractSet<MethodCall>
- *
- * @implements IteratorAggregate<MethodCall>
+ * @template-extends MutableSet<MethodCall>
  */
-final class MethodCalls extends AbstractSet implements IteratorAggregate, JsonSerializable
+final class MethodCalls extends MutableSet
 {
-    use JsonSerializableTrait;
-
-    public function getType(): string
-    {
-        return MethodCall::class;
-    }
 }

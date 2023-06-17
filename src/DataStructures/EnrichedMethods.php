@@ -4,27 +4,15 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DataStructures;
 
-use IteratorAggregate;
-use JsonSerializable;
+use Micoli\Multitude\Map\MutableMap;
 use Micoli\SymfonyCartography\Model\EnrichedMethod;
-use Ramsey\Collection\Map\AbstractTypedMap;
 
 /**
- * @extends AbstractTypedMap<string, EnrichedMethod>
+ * @template TKey of string
+ * @template TValue of EnrichedMethod
  *
- * @implements IteratorAggregate<string, EnrichedMethod>
+ * @template-extends MutableMap<TKey, TValue>
  */
-final class EnrichedMethods extends AbstractTypedMap implements IteratorAggregate, JsonSerializable
+final class EnrichedMethods extends MutableMap
 {
-    use JsonSerializableTrait;
-
-    public function getKeyType(): string
-    {
-        return 'string';
-    }
-
-    public function getValueType(): string
-    {
-        return EnrichedMethod::class;
-    }
 }

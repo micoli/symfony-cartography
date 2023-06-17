@@ -73,7 +73,7 @@ final class ClassParser
             );
             $this->addInternalMethods($namespacedName, $enrichedClass, $reflectedClass, $class);
             $this->addExtendedMethods($namespacedName, $enrichedClass, $reflectedClass);
-            $results->put($namespacedName, $enrichedClass);
+            $results->set($namespacedName, $enrichedClass);
         }
 
         return $results;

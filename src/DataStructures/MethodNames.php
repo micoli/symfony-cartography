@@ -4,22 +4,12 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DataStructures;
 
-use IteratorAggregate;
-use JsonSerializable;
+use Micoli\Multitude\Set\MutableSet;
 use Micoli\SymfonyCartography\Model\MethodName;
-use Ramsey\Collection\AbstractSet;
 
 /**
- * @extends AbstractSet<MethodName>
- *
- * @implements IteratorAggregate<MethodName>
+ * @template-extends MutableSet<MethodName>
  */
-final class MethodNames extends AbstractSet implements IteratorAggregate, JsonSerializable
+final class MethodNames extends MutableSet
 {
-    use JsonSerializableTrait;
-
-    public function getType(): string
-    {
-        return MethodName::class;
-    }
 }

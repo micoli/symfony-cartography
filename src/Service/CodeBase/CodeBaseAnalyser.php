@@ -76,6 +76,7 @@ final class CodeBaseAnalyser
         AnalyzedCodeBase $analyzedCodebase,
     ): void {
         foreach ($this->analyzers as $analyzer) {
+            /** @psalm-suppress InvalidArgument */
             $analyzedCodebase->extensionResultStore[$analyzer::class] = $analyzer->analyze($analyzedCodebase);
         }
 
@@ -120,7 +121,7 @@ final class CodeBaseAnalyser
         $classes = new EnrichedClasses();
         foreach ($files as $filename) {
             foreach ($this->classParser->parseFile($filename) as $item) {
-                $classes->put($item->namespacedName, $item);
+                $classes->set($item->namespacedName, $item);
             }
         }
         $this->psalmRunner->analyzeFiles($this->srcRoots, $files, $classes);

@@ -6,8 +6,8 @@ namespace Micoli\SymfonyCartography\Service\CodeBase;
 
 use Micoli\SymfonyCartography\DataStructures\EnrichedClasses;
 use Micoli\SymfonyCartography\Model\EnrichedClass;
+use Micoli\SymfonyCartography\Model\EnrichedMethod;
 use Micoli\SymfonyCartography\Model\MethodCall;
-use Micoli\SymfonyCartography\Model\MethodName;
 
 class CodeBaseFilters
 {
@@ -24,7 +24,7 @@ class CodeBaseFilters
         $filtered = [];
         /**
          * @var EnrichedClass $class
-         * @var MethodName $method
+         * @var EnrichedMethod $method
          * @var MethodCall $call
          */
         foreach ($enrichedClasses->getMethodCalls() as [$class, $method, $call]) {
@@ -43,9 +43,9 @@ class CodeBaseFilters
                 + $this->getNextCall($connectedTo, $className, [])
                 + $this->getNextCall($connectedFrom, $className, []);
         }
-        foreach ($enrichedClasses as $i => $class) {
+        foreach ($enrichedClasses as $class) {
             if (!array_key_exists($class->namespacedName, $filtered)) {
-                $enrichedClasses->remove($i);
+                $enrichedClasses->removeValue($class);
             }
         }
     }
@@ -54,11 +54,11 @@ class CodeBaseFilters
     {
         foreach ($enrichedClasses as $class) {
             foreach ($class->getMethods() as $method) {
-                foreach ($method->getMethodCalls() as $index => $call) {
-                    if ($enrichedClasses->offsetExists($call->to->namespacedName)) {
+                foreach ($method->getMethodCalls() as $call) {
+                    if ($enrichedClasses->hasKey($call->to->namespacedName)) {
                         continue;
                     }
-                    $method->getMethodCalls()->offsetUnset($index);
+                    $method->getMethodCalls()->remove($call);
                 }
             }
         }
@@ -69,16 +69,16 @@ class CodeBaseFilters
         $connectedCalls = [];
         /**
          * @var EnrichedClass $class
-         * @var MethodName $method
+         * @var EnrichedMethod $method
          * @var MethodCall $call
          */
         foreach ($enrichedClasses->getMethodCalls() as [$class, $method, $call]) {
             $connectedCalls[$call->to->namespacedName] = 1;
             $connectedCalls[$call->from->namespacedName] = 1;
         }
-        foreach ($enrichedClasses as $index => $class) {
+        foreach ($enrichedClasses as $className => $class) {
             if (!array_key_exists($class->namespacedName, $connectedCalls)) {
-                $enrichedClasses->remove($index);
+                $enrichedClasses->removeKey($className);
             }
         }
     }
