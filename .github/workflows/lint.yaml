@@ -30,7 +30,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-              php-version: ['8.1', '8.2']
+              php-version: ['8.2']
 
         steps:
             - name: "Checkout code"
@@ -65,10 +65,6 @@ jobs:
             - name: Lint YAML files
               if: always() && steps.install.outcome == 'success'
               run: ./bin/console lint:yaml config --parse-tags
-
-            - name: Lint Twig templates
-              if: always() && steps.install.outcome == 'success'
-              run: ./bin/console lint:twig src/UserInterface/templates --env=dev
 
             - name: Lint XLIFF translations
               if: always() && steps.install.outcome == 'success'

@@ -60,8 +60,6 @@ final class ClassParser
             if ($namespacedName === null || $className === null) {
                 continue;
             }
-            assert($namespacedName !== null);
-            assert($className !== null);
             try {
                 $reflectedClass = new ReflectionClass($namespacedName);
             } catch (ReflectionException $exception) {
