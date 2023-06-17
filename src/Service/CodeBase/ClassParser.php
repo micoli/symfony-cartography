@@ -57,6 +57,9 @@ final class ClassParser
             /** @var ?class-string $namespacedName */
             $namespacedName = $class->namespacedName?->toString();
             $className = $class->name?->name;
+            if ($namespacedName === null || $className === null) {
+                continue;
+            }
             assert($namespacedName !== null);
             assert($className !== null);
             try {
@@ -79,7 +82,7 @@ final class ClassParser
         return $results;
     }
 
-    /** @param  class-string $namespacedName */
+    /** @param class-string $namespacedName */
     public function addInternalMethods(string $namespacedName, EnrichedClass $enrichedClass, ReflectionClass $reflectedClass, Node\Stmt\Class_ $class): void
     {
         foreach ($class->getMethods() as $classMethod) {
