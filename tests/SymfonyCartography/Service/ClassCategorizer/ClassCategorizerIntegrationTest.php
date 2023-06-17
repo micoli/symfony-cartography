@@ -88,6 +88,10 @@ class ClassCategorizerIntegrationTest extends AbstractTestIntegration
             'App\Domain\EventSubscriber\CommentNotificationSubscriber::symfonyEventListener',
             'App\Domain\Event\CommentCreatedEvent::symfonyEvent',
             'App\Kernel::undefined',
+            'App\Domain\Specification\User\UserSpecification::undefined',
+            'App\Domain\Specification\User\UserSpecificationDTO::undefined',
+            'App\Domain\Specification\User\UserSpecificationIsUnique::undefined',
+            'App\Domain\Specification\User\UserSpecificationNonEmptyPassword::undefined',
         ], $categorizedClasses);
     }
 }

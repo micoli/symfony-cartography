@@ -7,6 +7,8 @@ namespace Micoli\SymfonyCartography\Service\Symfony;
 use LogicException;
 use Micoli\SymfonyCartography\DataStructures\MessengerHandlers;
 use Micoli\SymfonyCartography\Model\AnalyzedCodeBase;
+use Micoli\SymfonyCartography\Model\EnrichedClass;
+use Micoli\SymfonyCartography\Model\EnrichedMethod;
 use Micoli\SymfonyCartography\Model\MethodCall;
 use Micoli\SymfonyCartography\Model\MethodName;
 use Micoli\SymfonyCartography\Service\CodeBase\CodeBaseAnalyzerInterface;
@@ -57,7 +59,7 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
                 $serviceClass = $this->symfonyHelper->getServiceClass($container, $serviceId);
                 foreach ($this->getHandles($serviceId, $serviceClass, $tag) as $method => $handlers) {
                     foreach ($handlers as $handler) {
-                        $messageHandlers->add(new MessengerHandler($handler, new MethodName($serviceClass, $method)));
+                        $messageHandlers->append(new MessengerHandler($handler, new MethodName($serviceClass, $method)));
                     }
                 }
             }
@@ -177,6 +179,11 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
         /** @var MessengerHandlers $messengerHandlers */
         $messengerHandlers = $analyzedCodebase->extensionResultStore->offsetGet(MessengerAnalyser::class);
 
+        /**
+         * @var EnrichedClass $class
+         * @var EnrichedMethod $method
+         * @var MethodCall $call
+         */
         foreach ($analyzedCodebase->enrichedClasses->getMethodCalls() as [$class, $method, $call]) {
             if (!in_array((string) $call->to, $this->dispatcherMethods, true)) {
                 continue;
@@ -187,7 +194,7 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
                 continue;
             }
             foreach ($messengerHandlers->getByEventClassName($eventClassName) as $messengerHandler) {
-                $method->getMethodCalls()->add(new MethodCall(
+                $method->getMethodCalls()->append(new MethodCall(
                     $call->from,
                     $messengerHandler->handler,
                     $call->arguments,
@@ -205,11 +212,11 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
         if ($call->arguments->count() !== 1) {
             return null;
         }
-        if ($call->arguments[0]->count() !== 1) {
+        if ($call->arguments->first()?->count() !== 1) {
             return null;
         }
 
         /** @psalm-var class-string */
-        return $call->arguments[0][0]->value;
+        return $call->arguments->first()?->first()?->value;
     }
 }

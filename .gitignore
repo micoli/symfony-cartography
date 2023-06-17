@@ -1,5 +1,5 @@
-/tests/TestApplication/public/build/fonts/glyphicons-*
-/tests/TestApplication/public/build/images/glyphicons-*
+/tests/TestApplication/public/build/fonts
+/tests/TestApplication/public/build/images
 
 .php-version
 

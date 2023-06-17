@@ -6,8 +6,8 @@ namespace Micoli\SymfonyCartography\Service\Graph\VisJs;
 
 use Micoli\SymfonyCartography\DataStructures\EnrichedClasses;
 use Micoli\SymfonyCartography\Model\EnrichedClass;
+use Micoli\SymfonyCartography\Model\EnrichedMethod;
 use Micoli\SymfonyCartography\Model\MethodCall;
-use Micoli\SymfonyCartography\Model\MethodName;
 use Micoli\SymfonyCartography\Service\ClassHelper;
 use Micoli\SymfonyCartography\Service\Graph\AbstractGraphGenerator;
 use Micoli\SymfonyCartography\Service\Graph\GraphEngine;
@@ -29,7 +29,7 @@ final class VisJsGraphGenerator extends AbstractGraphGenerator implements GraphG
 
         /**
          * @var EnrichedClass $class
-         * @var MethodName $method
+         * @var EnrichedMethod $method
          * @var MethodCall $call
          */
         foreach ($enrichedClasses->getMethodCalls() as [$class, $method, $call]) {

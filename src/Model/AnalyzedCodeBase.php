@@ -19,16 +19,6 @@ final class AnalyzedCodeBase
     ) {
     }
 
-    public static function createEmpty(): self
-    {
-        return new self(
-            new EnrichedClasses(),
-            new InterfaceImplements(),
-            new ClassInterfaces(),
-            new ExtensionResultStore(),
-        );
-    }
-
     /**
      * @return array<string, int>
      */
@@ -36,6 +26,11 @@ final class AnalyzedCodeBase
     {
         $methods = [];
         $methodCallCount = 0;
+        /**
+         * @var EnrichedClass $class
+         * @var EnrichedMethod $method
+         * @var MethodCall $call
+         */
         foreach ($this->enrichedClasses->getMethodCalls() as [$class, $method, $call]) {
             $methods[(string) $method->methodName] = 1;
             ++$methodCallCount;

@@ -4,25 +4,14 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DataStructures;
 
-use IteratorAggregate;
-use JsonSerializable;
+use Micoli\Multitude\Set\MutableSet;
 use Micoli\SymfonyCartography\Service\Symfony\MessengerHandler;
-use Ramsey\Collection\AbstractSet;
 
 /**
- * @extends AbstractSet<MessengerHandler>
- *
- * @implements IteratorAggregate<MessengerHandler>
+ * @template-extends MutableSet<MessengerHandler>
  */
-final class MessengerHandlers extends AbstractSet implements IteratorAggregate, JsonSerializable
+final class MessengerHandlers extends MutableSet
 {
-    use JsonSerializableTrait;
-
-    public function getType(): string
-    {
-        return MessengerHandler::class;
-    }
-
     /**
      * @param class-string $eventClassName
      *

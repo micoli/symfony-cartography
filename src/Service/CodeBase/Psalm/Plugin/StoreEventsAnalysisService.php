@@ -109,7 +109,8 @@ final class StoreEventsAnalysisService
     {
         $typeProvider = $event->getStatementsSource()->getNodeTypeProvider();
 
-        return new MethodCallArguments(array_map(
+        /** @psalm-suppress PossiblyInvalidArgument */
+        return new MethodCallArguments(array_values(array_map(
             function (Arg $argument) use ($typeProvider) {
                 return new MethodCallArgumentUnion(array_values(array_map(
                     fn (Atomic $atomic) => new MethodCallArgument(
@@ -120,6 +121,6 @@ final class StoreEventsAnalysisService
                 )));
             },
             $event->getExpr()->getArgs(),
-        ));
+        )));
     }
 }

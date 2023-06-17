@@ -24,9 +24,9 @@ final class ClassesFilter
 
     public function filterClasses(AnalyzedCodeBase $analyzedCodeBase): void
     {
-        foreach ($analyzedCodeBase->enrichedClasses as $key => $enrichedClass) {
+        foreach ($analyzedCodeBase->enrichedClasses as $className => $enrichedClass) {
             if ($this->isFiltered($enrichedClass)) {
-                $analyzedCodeBase->enrichedClasses->remove($key);
+                $analyzedCodeBase->enrichedClasses->offsetUnset($className);
             }
         }
     }

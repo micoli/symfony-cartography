@@ -4,27 +4,12 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DataStructures;
 
-use IteratorAggregate;
-use JsonSerializable;
-use Ramsey\Collection\AbstractCollection;
-use Ramsey\Collection\Map\AbstractTypedMap;
+use Micoli\Multitude\Map\MutableMap;
+use Micoli\Multitude\Set\MutableSet;
 
 /**
- * @extends AbstractTypedMap<class-string, AbstractCollection>
- *
- * @implements IteratorAggregate<class-string, AbstractCollection>
+ * @template-extends MutableMap<class-string, MutableSet>
  */
-final class ExtensionResultStore extends AbstractTypedMap implements IteratorAggregate, JsonSerializable
+final class ExtensionResultStore extends MutableMap
 {
-    use JsonSerializableTrait;
-
-    public function getKeyType(): string
-    {
-        return 'string';
-    }
-
-    public function getValueType(): string
-    {
-        return AbstractCollection::class;
-    }
 }

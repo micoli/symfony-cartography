@@ -6,8 +6,8 @@ namespace Micoli\SymfonyCartography\Service\Graph\PlantUml;
 
 use Micoli\SymfonyCartography\DataStructures\EnrichedClasses;
 use Micoli\SymfonyCartography\Model\EnrichedClass;
+use Micoli\SymfonyCartography\Model\EnrichedMethod;
 use Micoli\SymfonyCartography\Model\MethodCall;
-use Micoli\SymfonyCartography\Model\MethodName;
 use Micoli\SymfonyCartography\Service\Categorizer\ClassCategoryInterface;
 use Micoli\SymfonyCartography\Service\Graph\AbstractGraphGenerator;
 use Micoli\SymfonyCartography\Service\Graph\GraphEngine;
@@ -53,7 +53,7 @@ final class PlantUmlGraphGenerator extends AbstractGraphGenerator implements Gra
         $calls = [];
         /**
          * @var EnrichedClass $class
-         * @var MethodName $method
+         * @var EnrichedMethod $method
          * @var MethodCall $call
          */
         foreach ($enrichedClasses->getMethodCalls() as [$class, $method, $call]) {

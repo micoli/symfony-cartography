@@ -32,6 +32,7 @@ abstract class AbstractMessengerHandlerCategorizer implements ClassCategorizerIn
                     if ($argumentInterfaces === null) {
                         continue;
                     }
+                    /** @psalm-suppress MixedArgumentTypeCoercion */
                     if (ArrayMatcher::inArray($argumentInterfaces->toArray(), $this->interfaces)) {
                         return true;
                     }

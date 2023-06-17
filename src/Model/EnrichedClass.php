@@ -36,7 +36,7 @@ final class EnrichedClass implements JsonSerializable
 
     public function addMethod(EnrichedMethod $method): void
     {
-        $this->methods->put($method->methodName->name, $method);
+        $this->methods->set($method->methodName->name, $method);
     }
 
     public function addComment(string $comment): void

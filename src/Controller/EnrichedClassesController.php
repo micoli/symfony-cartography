@@ -24,14 +24,13 @@ final class EnrichedClassesController extends AbstractController
 
     public function __invoke(): Response
     {
-        return new JsonResponse(array_map(
+        return new JsonResponse($this->codeParser->analyse()->enrichedClasses->map(
             fn (EnrichedClass $class) => [
                 'namespacedName' => $class->namespacedName,
                 'name' => $class->name,
                 'category' => $class->getCategory()->getValue(),
                 'methods' => $class->getMethods()->toArray(),
             ],
-            array_values($this->codeParser->analyse()->enrichedClasses->toArray()),
         ));
     }
 }

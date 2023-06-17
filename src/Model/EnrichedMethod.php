@@ -22,7 +22,7 @@ final class EnrichedMethod implements JsonSerializable
 
     public function addMethodCalls(MethodCall ...$calls): void
     {
-        array_map(fn (MethodCall $call) => $this->methodCalls->add($call), $calls);
+        array_map(fn (MethodCall $call) => $this->methodCalls->append($call), $calls);
     }
 
     public function getMethodCalls(): MethodCalls
@@ -43,7 +43,7 @@ final class EnrichedMethod implements JsonSerializable
     {
         return [
             'methodName' => $this->methodName,
-            'calls' => array_values($this->methodCalls->toArray()),
+            'calls' => $this->methodCalls->toArray(),
         ];
     }
 }

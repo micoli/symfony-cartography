@@ -40,6 +40,7 @@ when@dev:
 ```
 
 - and create `config/packages/symfony_cartography.yaml`
+
 [//]: <> (include-placeholder-start "./TestApplication/config/packages/symfony_cartography.yaml")
 ```
 symfony_cartography:

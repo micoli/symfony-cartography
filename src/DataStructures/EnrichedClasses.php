@@ -4,30 +4,17 @@ declare(strict_types=1);
 
 namespace Micoli\SymfonyCartography\DataStructures;
 
-use IteratorAggregate;
+use Micoli\Multitude\Map\MutableMap;
 use Micoli\SymfonyCartography\Model\EnrichedClass;
 use Micoli\SymfonyCartography\Model\EnrichedMethod;
 use Micoli\SymfonyCartography\Model\MethodCall;
-use Ramsey\Collection\Map\AbstractTypedMap;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 /**
- * @extends AbstractTypedMap<string, EnrichedClass>
- *
- * @implements IteratorAggregate<string, EnrichedClass>
+ * @template-extends MutableMap<class-string, EnrichedClass>
  */
-final class EnrichedClasses extends AbstractTypedMap implements IteratorAggregate
+final class EnrichedClasses extends MutableMap
 {
-    public function getKeyType(): string
-    {
-        return 'string';
-    }
-
-    public function getValueType(): string
-    {
-        return EnrichedClass::class;
-    }
-
     #[Ignore]
     public function getImplements(string $interface): iterable
     {
@@ -49,7 +36,6 @@ final class EnrichedClasses extends AbstractTypedMap implements IteratorAggregat
      *     2: MethodCall
      * }>
      */
-    #[Ignore]
     public function getMethodCalls(): iterable
     {
         foreach ($this as $class) {
