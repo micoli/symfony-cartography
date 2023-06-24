@@ -16,20 +16,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 final class ServiceAnalyser
 {
     use BuildDebugContainerTrait;
 
     private array $messageHandlers = [];
-    private ContainerInterface $container;
 
     public function __construct(
         #[Autowire(service: 'service_container')]
-        ContainerInterface $container,
+        private readonly ContainerInterface $innerContainer,
         private readonly SymfonyHelper $helper,
         private readonly LoggerInterface $logger,
     ) {
-        $this->container = $container;
     }
 
     public function analyze(

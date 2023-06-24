@@ -25,6 +25,9 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Handler\MessageSubscriberInterface;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWireInterface
 {
     use BuildDebugContainerTrait;
@@ -35,7 +38,7 @@ final class MessengerAnalyser implements CodeBaseAnalyzerInterface, CodeBaseWire
     /** @param list<array{class: class-string, method: string}> $dispatchers */
     public function __construct(
         #[Autowire(service: 'service_container')]
-        private readonly ContainerInterface $container,
+        private readonly ContainerInterface $innerContainer,
         private readonly LoggerInterface $logger,
         private readonly SymfonyHelper $symfonyHelper,
         private readonly KernelInterface $kernel,
