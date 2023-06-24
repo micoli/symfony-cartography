@@ -21,7 +21,7 @@ final class ServiceAnalyser
     use BuildDebugContainerTrait;
 
     private array $messageHandlers = [];
-    private ContainerInterface $container;
+    private ContainerInterface $innerContainer;
 
     public function __construct(
         #[Autowire(service: 'service_container')]
@@ -29,7 +29,7 @@ final class ServiceAnalyser
         private readonly SymfonyHelper $helper,
         private readonly LoggerInterface $logger,
     ) {
-        $this->container = $container;
+        $this->innerContainer = $container;
     }
 
     public function analyze(
