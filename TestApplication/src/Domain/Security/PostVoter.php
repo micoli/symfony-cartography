@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
+ *
+ * @extends Voter<string, User>
  */
 final class PostVoter extends Voter
 {
